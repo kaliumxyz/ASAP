@@ -1,8 +1,9 @@
 'use strict'
 const context = canvas.getContext('2d')
 
+// Lets not hamper any further keypresses shall we?
+window.onkeydown = e => e.keyCode===32?start():e
 
-window.onkeydown = e => e 
 /* TODO:
  * - unit testing.
  * - something more fun, sync it up with a node server somehow?
@@ -12,7 +13,6 @@ window.onkeydown = e => e
  * - actual particle behaviour (lol)
  *   - gravity?
  *   - motion.
- * - saving to local storage?
  */
 
 
@@ -32,7 +32,7 @@ const particle = _ => { return {
         y: rand()
     },
     color: `hsla(${rand(360)},100%,58%,1)`,
-    mass: 20,
+    mass: 20 + rand(20),
     type: 'particle',
     // It might be a wise move to let the behaviour be independent of the looks.
     shape: 'round', 
@@ -54,7 +54,7 @@ const render = {
     },
     square : particle => {
         context.fillStyle = particle.color
-        context.fillRect(particle.coords.x,particle.coords.y,particle.coords.x + particle.mass,cparticle.coords.x + particle.mass)
+        context.fillRect(particle.coords.x,particle.coords.y, particle.mass,  particle.mass)
         context.fill()
     },
     
@@ -67,19 +67,21 @@ const gravity = (particle, entity) => {
         x: particle.coords.x - entity.coords.x,
         y: particle.coords.y - entity.coords.y,
     }
-    // logic here :p
+    // logic here :p.
 }
 
-const save = _ => localStorage.setItem('particles', particleArr)
 
-// Horrible idea, keep trying :p.
-const load = _ => particleArr = localStorage.getItem('particles')
+const save = _ => localStorage.setItem('particles', JSON.stringify(particleArr))
+
+const load = _ => particleArr = JSON.parse(localStorage.getItem('particles'))
 
 
 // Stuff for running the darn thing.
 
 const start = _ => {
     let i = 100
+
+    particleArr = []
 
     while (i--)
         particleArr.push(particle())
@@ -92,7 +94,7 @@ const main = _ => {
     context.fillStyle='#FFF'
     context.fillRect(0,0,canvas.width,canvas.height)
     particleArr.forEach( particle => {
-        render.particle(particle)
+        render.square(particle)
     })
 }
 
