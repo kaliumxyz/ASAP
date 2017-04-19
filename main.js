@@ -7,12 +7,24 @@ window.onkeydown = e => e.keyCode===32?start():e
 /* TODO:
  * - unit testing.
  * - something more fun, sync it up with a node server somehow?
- * - multiple particle types.
+ * - multiple particle types:
+ *   -  default (atoms?)
+ *   -  mist????
  * - more shiny good stuff.
  * - GUI
- * - actual particle behaviour (lol)
- *   - gravity?
+ * - actual particle behaviour:
+ *   - point gravity.
  *   - motion.
+ *   - containment.
+ *   - collicions.
+ *   - steering behaviour:
+ *     - AI in a particle engine? yes, go fuck yourself if you don't know about steering behaviour.
+ *     - seriously go feel a wicked degree of shame mate.
+ * - mouse / pointer modes:
+ *   - create / emit.
+ *   - gravitate.
+ *   - contain.
+ *   - grab.
  */
 
 
@@ -28,8 +40,8 @@ const particle = _ => { return {
         y: rand(canvas.height)
     },
     acc: {
-        x: rand(),
-        y: rand()
+        x: rand(2)-1,
+        y: rand(2)-1
     },
     color: `hsla(${rand(360)},100%,58%,1)`,
     mass: 20 + rand(20),
@@ -61,6 +73,8 @@ const render = {
 
 }
 
+// Moving stuff here.
+
 const gravity = (particle, entity) => {
     const force = 9.81
     const distance = {
@@ -70,6 +84,14 @@ const gravity = (particle, entity) => {
     // logic here :p.
 }
 
+const move = particle => {
+    particle.coords.x += particle.acc.x
+    particle.coords.y += particle.acc.y
+}
+
+
+
+// Saving stuff below.
 
 const save = _ => localStorage.setItem('particles', JSON.stringify(particleArr))
 
@@ -94,6 +116,7 @@ const main = _ => {
     context.fillStyle='#FFF'
     context.fillRect(0,0,canvas.width,canvas.height)
     particleArr.forEach( particle => {
+        move(particle)
         render.square(particle)
     })
 }
