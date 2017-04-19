@@ -39,7 +39,7 @@ const particle = _ => { return {
 }}
 
 // A place to store all these particles... I need to sanitize the naming conventions.
-const particleArr = []
+let particleArr = []
 
 // Overly big render object, might be smarter to do this as a function instead.
 const render = { 
@@ -70,6 +70,14 @@ const gravity = (particle, entity) => {
     // logic here :p
 }
 
+const save = _ => localStorage.setItem('particles', particleArr)
+
+// Horrible idea, keep trying :p.
+const load = _ => particleArr = localStorage.getItem('particles')
+
+
+// Stuff for running the darn thing.
+
 const start = _ => {
     let i = 100
 
@@ -79,10 +87,9 @@ const start = _ => {
 }
 
 const main = _ => {
-
     // Rate at which it runs doesn't matter.
     requestAnimationFrame(main)
-    context.fillStyle="#FFF"
+    context.fillStyle='#FFF'
     context.fillRect(0,0,canvas.width,canvas.height)
     particleArr.forEach( particle => {
         render.particle(particle)
