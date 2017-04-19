@@ -1,7 +1,8 @@
 'use strict'
-const canvas = select('canvas')
 const context = canvas.getContext('2d')
 
+
+window.onkeydown = e => e 
 /* TODO:
  * - unit testing.
  * - something more fun, sync it up with a node server somehow?
@@ -12,8 +13,9 @@ const context = canvas.getContext('2d')
  *   - gravity?
  *   - motion.
  * - saving to local storage?
- * - resizing.
  */
+
+
 const rand = i => {
     i = i || 1
     return i * Math.random()
@@ -21,9 +23,15 @@ const rand = i => {
 
 // Particle constructor.
 const particle = _ => { return {
-    coords: {x: rand(1000), y: rand(1000)},
-    acc: {x: rand(), y: rand()},
-    color: `hsla(${rand(360)},100%,40%,1)`,
+    coords: {
+        x: rand(canvas.width), 
+        y: rand(canvas.height)
+    },
+    acc: {
+        x: rand(),
+        y: rand()
+    },
+    color: `hsla(${rand(360)},100%,58%,1)`,
     mass: 20,
     type: 'particle',
     // It might be a wise move to let the behaviour be independent of the looks.
@@ -74,12 +82,12 @@ const main = _ => {
 
     // Rate at which it runs doesn't matter.
     requestAnimationFrame(main)
-
-    context.fillStyle="rgba(255,255,000,1)"
-    context.fillRect(0,0,canvas.height,canvas.width)
+    context.fillStyle="#FFF"
+    context.fillRect(0,0,canvas.width,canvas.height)
     particleArr.forEach( particle => {
         render.particle(particle)
     })
 }
 
 start()
+main()

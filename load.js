@@ -8,5 +8,14 @@ const load = _ => {
 	select("head").appendChild(script)
 }
 
+const canvas = select('canvas')
+
+window.onresize = _ => {
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+}
+
+window.onload = window.onresize
+
 // call load() if space is pressed.
 window.onkeydown = e => e.keyCode===32 && load()
