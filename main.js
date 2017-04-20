@@ -28,16 +28,28 @@ window.onkeydown = e => e.keyCode===32?start():e
  */
 
 
+const mouse = {
+    emit : ev => particleArr.push(particle(ev.clientX,ev.clientY)),
+    pew : ev => {
+        let i = 10
+        while (i--){
+            particleArr.push(particle(ev.clientX,ev.clientY))
+        }
+    },
+}
+
+window.onclick = mouse.pew
+
 const rand = i => {
     i = i || 1
     return i * Math.random()
 }
 
 // Particle constructor.
-const particle = _ => { return {
+const particle = (x,y) => { return {
     coords: {
-        x: rand(canvas.width), 
-        y: rand(canvas.height)
+        x: x || rand(canvas.width), 
+        y: y || rand(canvas.height)
     },
     acc: {
         x: rand(2)-1,
@@ -89,7 +101,9 @@ const move = particle => {
     particle.coords.y += particle.acc.y
 }
 
-
+const collide = entity => {
+    particleArr.forEach(particle => entity.coords == particle.coords ? particle.color = "": "" )
+}
 
 // Saving stuff below.
 
