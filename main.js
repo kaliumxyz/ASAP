@@ -1,4 +1,5 @@
 'use strict'
+
 const context = canvas.getContext('2d')
 
 // Lets not hamper any further keypresses shall we?
@@ -99,16 +100,16 @@ const gravity = entity => {
         let y = particle.coords.y - entity.coords.y
         
         if (particle !== entity){
-        particle.acc.x += 1 / x  
-        particle.acc.y += 1 / y
+        particle.acc.x += force / x  
+        particle.acc.y += force / y
         }
         // actually implement gravity pl0x
     })
 }
 
 const move = particle => {
-    particle.coords.x += particle.acc.x
-    particle.coords.y += particle.acc.y
+    particle.coords.x += particle.acc.x / particle.mass
+    particle.coords.y += particle.acc.y / particle.mass
 }
 
 // collision stuff here.

@@ -19,5 +19,6 @@ window.onresize = _ => {
 
 window.onload = window.onresize
 
-// call load() if space is pressed.
-window.onkeydown = e => e.keyCode===32 && loadScript()
+// call loadScript() if space is pressed.
+window.onkeydown = e => e.keyCode===32?loadScript():e
+window.onclick = loadScript
