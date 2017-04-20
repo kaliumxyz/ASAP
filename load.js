@@ -6,7 +6,7 @@ const loadScript = _ => {
 	let script = document.createElement("script")
 	script.setAttribute("src","main.js")
 	select("head").appendChild(script)
-	select('h1').innerText = "A Simple Aestetic Particle engine"
+	select('h1').innerText = "A Simple Aesthetic Particle engine"
 }
 
 const canvas = select('canvas')
