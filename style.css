@@ -2,4 +2,11 @@ html, body, canvas {
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
+	font-family: 'Roboto Mono', monospace;
+}
+h1 {
+	width: 100%;
+	top: 80px;
+	position: fixed;
+	text-align: center;
 }

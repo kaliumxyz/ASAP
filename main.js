@@ -29,16 +29,20 @@ window.onkeydown = e => e.keyCode===32?start():e
 
 
 const mouse = {
-    emit : ev => particleArr.push(particle(ev.clientX,ev.clientY)),
-    pew : ev => {
-        let i = 10
+    emit : ev => {
+        let i = 1
         while (i--){
             particleArr.push(particle(ev.clientX,ev.clientY))
+        }},
+    pew : ev => {
+        let i = 1000
+        while (i--){
+            particleArr[i] = (particle(ev.clientX,ev.clientY))
         }
     },
 }
 
-window.onclick = mouse.pew
+window.onclick = mouse.emit
 
 const rand = i => {
     i = i || 1
@@ -87,18 +91,30 @@ const render = {
 
 // Moving stuff here.
 
-const gravity = (particle, entity) => {
+const gravity = entity => {
     const force = 9.81
-    const distance = {
-        x: particle.coords.x - entity.coords.x,
-        y: particle.coords.y - entity.coords.y,
-    }
-    // logic here :p.
+    particleArr.forEach(particle => {
+
+        let x = particle.coords.x - entity.coords.x
+        let y = particle.coords.y - entity.coords.y
+        
+        if (particle !== entity){
+        particle.acc.x += 1 / x  
+        particle.acc.y += 1 / y
+        }
+        // actually implement gravity pl0x
+    })
 }
 
 const move = particle => {
     particle.coords.x += particle.acc.x
     particle.coords.y += particle.acc.y
+}
+
+// collision stuff here.
+
+const checkWithinBounds = entity => {
+    
 }
 
 const collide = entity => {
@@ -130,7 +146,9 @@ const main = _ => {
     context.fillStyle='#FFF'
     context.fillRect(0,0,canvas.width,canvas.height)
     particleArr.forEach( particle => {
+        gravity(particle)
         move(particle)
+        checkWithinBounds(particle)
         render.square(particle)
     })
 }

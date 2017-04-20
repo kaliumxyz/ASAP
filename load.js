@@ -6,9 +6,11 @@ const loadScript = _ => {
 	let script = document.createElement("script")
 	script.setAttribute("src","main.js")
 	select("head").appendChild(script)
+	select('h1').innerText = "A Simple Aestetic Particle engine"
 }
 
 const canvas = select('canvas')
+
 
 window.onresize = _ => {
     canvas.width = window.innerWidth
