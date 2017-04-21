@@ -20,3 +20,12 @@ code {
 	min-width: 200px;
 	min-height: 40px;
 }
+ul {
+	position: fixed;
+	list-style: none;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	background: white;
+	min-height: 40px;
+}

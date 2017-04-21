@@ -26,9 +26,17 @@ window.onkeydown = e => e.keyCode===32?start():e
  *   - gravitate.
  *   - contain.
  *   - grab.
+ *   - editor.
+ *     - json.
+ *     - aspects? some drag and pull system, freeze, selecting, etc.
+ *   - create gravity well. 
  * - Adding title randomizer.
  * - Add angles.
  */
+
+const settings = {
+
+}
 
 let pause = false
 
@@ -46,32 +54,52 @@ const mouse = {
         }
     },
     edit : ev => {
-        pause = true
+        pause = !pause 
         edit(ev.clientX,ev.clientY)
     }
 }
 
-window.onclick = mouse.edit
+const scroll = ev => {
+    console.log(ev)
+    scroller(ev.clientX,ev.clientY)
+}
+
+window.onclick = mouse.emit
+
+// window.onmousewheel = scroll
 
 const rand = i => {
     i = i || 1
     return i * Math.random()
 }
 
+
+
+// scroller window for picking mouse modes -fix this-
+const scroller = (x,y) => {
+    const picker = document.createElement("ul")
+    let mode
+    for (mode in mouse) {
+        let item = document.createElement("li")
+        item.innerText = mode
+        picker.appendChild(item)
+    }
+
+
+    select('body').appendChild(picker)
+    pause = !pause
+}
+
 // Editor
 const edit = (x,y) => {
-    // const wrapper = document.createElement("pre")
-    // const editor = document.createElement("code")
-    // editor.setAttribute('class','json')
-    const editor = select("code")
+    const editor = document.createElement("code")
+    editor.setAttribute('class','json')
     let particle = findParticle(x,y)
     console.log(particle)
     if(!particle)
     return
     editor.innerText = JSON.stringify(particle)
-    
-    select('pre').appendChild(editor)
-
+    select('body').appendChild(editor)
 }
 
 const findParticle = (x,y) => {
@@ -127,7 +155,7 @@ const render = {
     context.fillRect(0,0,canvas.width,canvas.height)
     particleArr.forEach( particle => {
         checkWithinBounds(particle)
-        gravity(particle)
+        gravity.wiggly(particle)
         move(particle)
         render.square(particle)
     })
@@ -138,8 +166,9 @@ const render = {
 
 // Moving stuff here.
 
-const gravity = entity => {
-    const force = 9.81
+const gravity = {
+    wiggly: entity => {
+    const force = 1
     particleArr.forEach(particle => {
 
         let x = particle.coords.x - entity.coords.x
@@ -151,7 +180,7 @@ const gravity = entity => {
         }
         // actually implement gravity pl0x
     })
-}
+}}
 
 const move = particle => {
     particle.coords.x += particle.acc.x / particle.mass
