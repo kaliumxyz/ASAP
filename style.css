@@ -11,3 +11,12 @@ h1 {
 	text-align: center;
 	user-select: none;
 }
+code {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	background: white;
+	min-width: 200px;
+	min-height: 40px;
+}

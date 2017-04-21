@@ -30,6 +30,8 @@ window.onkeydown = e => e.keyCode===32?start():e
  * - Add angles.
  */
 
+let pause = false
+
 
 const mouse = {
     emit : ev => {
@@ -38,18 +40,50 @@ const mouse = {
             particleArr.push(particle(ev.clientX,ev.clientY))
         }},
     pew : ev => {
-        let i = 1000
+        let i = 100
         while (i--){
             particleArr[i] = (particle(ev.clientX,ev.clientY))
         }
     },
+    edit : ev => {
+        pause = true
+        edit(ev.clientX,ev.clientY)
+    }
 }
 
-window.onclick = mouse.emit
+window.onclick = mouse.edit
 
 const rand = i => {
     i = i || 1
     return i * Math.random()
+}
+
+// Editor
+const edit = (x,y) => {
+    // const wrapper = document.createElement("pre")
+    // const editor = document.createElement("code")
+    // editor.setAttribute('class','json')
+    const editor = select("code")
+    let particle = findParticle(x,y)
+    console.log(particle)
+    if(!particle)
+    return
+    editor.innerText = JSON.stringify(particle)
+    
+    select('pre').appendChild(editor)
+
+}
+
+const findParticle = (x,y) => {
+    let temp
+        particleArr.forEach(particle => {
+        if(x < particle.coords.x + particle.mass)
+        if(x > particle.coords.x)
+        if(y < particle.coords.y + particle.mass) 
+        if(y > particle.coords.y)
+        temp = particle
+    })
+    return temp || false
 }
 
 // Particle constructor.
@@ -88,7 +122,17 @@ const render = {
         context.fillRect(particle.coords.x,particle.coords.y, particle.mass,  particle.mass)
         context.fill()
     },
-    
+    game: _ => {
+    context.fillStyle='#FFF'
+    context.fillRect(0,0,canvas.width,canvas.height)
+    particleArr.forEach( particle => {
+        checkWithinBounds(particle)
+        gravity(particle)
+        move(particle)
+        render.square(particle)
+    })
+
+    }
 
 }
 
@@ -153,14 +197,8 @@ const start = _ => {
 const main = _ => {
     // Rate at which it runs doesn't matter.
     requestAnimationFrame(main)
-    context.fillStyle='#FFF'
-    context.fillRect(0,0,canvas.width,canvas.height)
-    particleArr.forEach( particle => {
-        checkWithinBounds(particle)
-        gravity(particle)
-        move(particle)
-        render.square(particle)
-    })
+    if (!pause)
+    render.game()
 }
 
 start()
