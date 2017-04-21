@@ -4,12 +4,34 @@ html, body, canvas {
 	overflow: hidden;
 	font-family: 'Roboto Mono', monospace;
 }
+@keyframes blink {
+    0% {background: rgba(255,255,255,0.8);}
+    50% {background: black;}
+	100% {background: rgba(255,255,255,0.8);}
+}
 h1 {
 	width: 100%;
 	top: 80px;
 	position: fixed;
 	text-align: center;
 	user-select: none;
+}
+.options {
+	width: 100%;
+	top: 128px;
+	position: fixed;
+	text-align: center;
+	user-select: none;
+}
+.option {
+	padding: 2px;
+	background: black;
+	color: white;
+}
+.active {
+	background: white;
+	padding: 2px;
+	animation: 1s blink step-end infinite;
 }
 code {
 	position: fixed;
