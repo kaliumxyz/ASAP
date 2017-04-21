@@ -27,6 +27,7 @@ window.onkeydown = e => e.keyCode===32?start():e
  *   - contain.
  *   - grab.
  * - Adding title randomizer.
+ * - Add angles.
  */
 
 
@@ -116,7 +117,14 @@ const move = particle => {
 // collision stuff here.
 
 const checkWithinBounds = entity => {
-    
+    if(entity.coords.x < 0)
+    entity.coords.x = canvas.width
+    if(entity.coords.x > canvas.width)
+    entity.coords.x = 0
+    if(entity.coords.y < 0) 
+    entity.coords.y = canvas.height
+    if(entity.coords.y > canvas.height)
+    entity.coords.y = 0
 }
 
 const collide = entity => {
@@ -148,9 +156,9 @@ const main = _ => {
     context.fillStyle='#FFF'
     context.fillRect(0,0,canvas.width,canvas.height)
     particleArr.forEach( particle => {
+        checkWithinBounds(particle)
         gravity(particle)
         move(particle)
-        checkWithinBounds(particle)
         render.square(particle)
     })
 }
