@@ -203,21 +203,21 @@ const gravity = {
     particleArr.forEach(particle => {
 
         if (particle !== entity){
-        let x = particle.coords.x - entity.coords.x
-        let y = particle.coords.y - entity.coords.y
+        let xDistance = particle.coords.x - entity.coords.x
+        let yDistance = particle.coords.y - entity.coords.y
         force * entity.mass
-        particle.acc.x += force / x  
-        particle.acc.y += force / y
+        particle.acc.x += force / xDistance  
+        particle.acc.y += force / yDistance
         }
     })
     },
     wiggly: entity => {
-    const force = 1
+    let force = 1
     particleArr.forEach(particle => {
         if (particle !== entity){
         let x = particle.coords.x - entity.coords.x
         let y = particle.coords.y - entity.coords.y
-        force * entity.mass
+        //force *= entity.mass
         particle.acc.x -= force / x  
         particle.acc.y -= force / y
         }
@@ -280,7 +280,7 @@ function load(){
 // Stuff for running the darn thing.
 
 function start() {
-    let i = 1
+    let i = 100
 
     particleArr = []
 

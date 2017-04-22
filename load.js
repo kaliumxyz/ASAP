@@ -2,6 +2,8 @@
 
 const select = selector => document.querySelector(selector)
 
+const selectALL = selector => document.querySelectorAll(selector)
+
 const loadScript = _ => {
 	let script = document.createElement("script")
 	script.setAttribute("src","main.js")
@@ -21,7 +23,8 @@ window.onresize = _ => {
 window.onload = window.onresize
 
 function moveCursor() {
-
+	const options = selectAll('.options')
+	
 }
 
 const keys = []
