@@ -23,3 +23,5 @@ window.onload = window.onresize
 // call loadScript() if space is pressed.
 window.onkeydown = e => e.keyCode===32?loadScript():e
 window.onclick = loadScript
+
+//document.querySelectorAll('.option').forEach(el => el.onclick = ev => el.setAttribute('class','active'))

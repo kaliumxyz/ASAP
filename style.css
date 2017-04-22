@@ -30,12 +30,15 @@ h1 {
 	user-select: none;
 }
 .option {
-	padding: 2px;
+	padding: 0;
 	margin: 0;
 }
 .active {
 	background: white;
-	padding: 2px;
+	color: black;
+}
+.curser {
+	padding: 0;
 	animation: 1s blink step-end infinite;
 }
 code {

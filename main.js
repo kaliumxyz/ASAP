@@ -3,7 +3,11 @@
 const context = canvas.getContext('2d')
 
 // Lets not hamper any further keypresses shall we?
-window.onkeydown = e => e.keyCode===32?start():e
+const keys = []
+keys[32] = start
+keys[49] = save
+keys[50] = load
+window.onkeydown = e => keys[e.keyCode]() && e
 
 /* TODO:
  * - unit testing.
@@ -34,9 +38,9 @@ window.onkeydown = e => e.keyCode===32?start():e
  * - Add angles.
  */
 
-const settings = {
+const settings = []
 
-}
+
 
 let pause = false
 
@@ -236,14 +240,17 @@ const collide = entity => {
 
 // Saving stuff below.
 
-const save = _ => localStorage.setItem('particles', JSON.stringify(particleArr))
+function save(){
+    localStorage.setItem('particles', JSON.stringify(particleArr))
+}
 
-const load = _ => particleArr = JSON.parse(localStorage.getItem('particles'))
-
+function load(){
+    particleArr = JSON.parse(localStorage.getItem('particles'))
+}
 
 // Stuff for running the darn thing.
 
-const start = _ => {
+function start() {
     let i = 1
 
     particleArr = []
@@ -253,7 +260,7 @@ const start = _ => {
     console.log(particleArr)
 }
 
-const main = _ => {
+function main() {
     // Rate at which it runs doesn't matter.
     requestAnimationFrame(main)
     if (!pause)
