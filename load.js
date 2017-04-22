@@ -20,8 +20,19 @@ window.onresize = _ => {
 
 window.onload = window.onresize
 
-// call loadScript() if space is pressed.
-window.onkeydown = e => e.keyCode===32?loadScript():e
+function moveCursor() {
+
+}
+
+const keys = []
+keys[32] = loadScript
+keys[37] = moveCursor 
+keys[38] = moveCursor
+keys[39] = moveCursor
+keys[40] = moveCursor
+
+// call the function corresponding to the key.
+window.onkeydown = e => keys[e.keyCode]() && e
 window.onclick = loadScript
 
 //document.querySelectorAll('.option').forEach(el => el.onclick = ev => el.setAttribute('class','active'))

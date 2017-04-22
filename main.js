@@ -2,14 +2,12 @@
 
 const context = canvas.getContext('2d')
 
-// Lets not hamper any further keypresses shall we?
-const keys = []
+// New keys.
 keys[32] = start
 keys[49] = save
 keys[50] = load
 keys[80] = pause
 keys[77] = mouseNext
-window.onkeydown = e => keys[e.keyCode]() && e
 
 /* TODO:
  * - unit testing.
@@ -52,20 +50,31 @@ const mouse = {
         let i = 1
         while (i--){
             particleArr.push(particle(ev.clientX,ev.clientY))
-        }},
-    pew : ev => {
-        let i = 10
-        while (i--){
-            particleArr[i] = (particle(ev.clientX,ev.clientY))
         }
     },
-    edit : ev => {
-        pause() 
-        // edit(ev.clientX,ev.clientY)
-    }
+    // blackHole : ev => {
+    //     particleArr.push(particle(ev.clientX,ev.clientY,-100))
+    // }
+    // pew : ev => {
+    //     let i = 10
+    //     while (i--){
+    //         particleArr[i] = (particle(ev.clientX,ev.clientY))
+    //     }
+    // },
+    gravitate : ev => {
+        gravity.wigglyRepell({
+            coords: {
+                x: ev.clientX,
+                y: ev.clientY,
+            },
+            mass: 1000000000000,
+        })
+    },
+    // edit : ev => {
+    //     pause() 
+    //     edit(ev.clientX,ev.clientY)
+    // },
 }
-
-const mouseDir = mouse.l
 
 function mouseNext() {
     let flag
@@ -136,7 +145,7 @@ const findParticle = (x,y) => {
 }
 
 // Particle constructor.
-const particle = (x,y) => { return {
+const particle = (x,y,mass) => { return {
     coords: {
         x: x || rand(canvas.width), 
         y: y || rand(canvas.height)
@@ -146,7 +155,7 @@ const particle = (x,y) => { return {
         y: rand(2)-1
     },
     color: `hsla(${rand(360)},100%,58%,1)`,
-    mass: 20 + rand(80),
+    mass: mass || 20 + rand(80),
     type: 'particle',
     // It might be a wise move to let the behaviour be independent of the looks.
     shape: 'round', 
@@ -205,7 +214,6 @@ const gravity = {
     wiggly: entity => {
     const force = 1
     particleArr.forEach(particle => {
-
         if (particle !== entity){
         let x = particle.coords.x - entity.coords.x
         let y = particle.coords.y - entity.coords.y
