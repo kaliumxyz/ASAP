@@ -125,7 +125,7 @@ const particle = (x,y) => { return {
         y: rand(2)-1
     },
     color: `hsla(${rand(360)},100%,58%,1)`,
-    mass: 20 + rand(20),
+    mass: 20 + rand(80),
     type: 'particle',
     // It might be a wise move to let the behaviour be independent of the looks.
     shape: 'round', 
@@ -157,6 +157,7 @@ const render = {
         checkWithinBounds(particle)
         gravity.wiggly(particle)
         move(particle)
+        collide(particle)
         render.square(particle)
     })
 
@@ -167,18 +168,30 @@ const render = {
 // Moving stuff here.
 
 const gravity = {
+    wigglyRepell: entity => {
+    const force = 1
+    particleArr.forEach(particle => {
+
+        if (particle !== entity){
+        let x = particle.coords.x - entity.coords.x
+        let y = particle.coords.y - entity.coords.y
+        force * entity.mass
+        particle.acc.x += force / x  
+        particle.acc.y += force / y
+        }
+    })
+    },
     wiggly: entity => {
     const force = 1
     particleArr.forEach(particle => {
 
+        if (particle !== entity){
         let x = particle.coords.x - entity.coords.x
         let y = particle.coords.y - entity.coords.y
-        
-        if (particle !== entity){
-        particle.acc.x += force / x  
-        particle.acc.y += force / y
+        force * entity.mass
+        particle.acc.x -= force / x  
+        particle.acc.y -= force / y
         }
-        // actually implement gravity pl0x
     })
 }}
 
@@ -201,7 +214,24 @@ const checkWithinBounds = entity => {
 }
 
 const collide = entity => {
-    particleArr.forEach(particle => entity.coords == particle.coords ? particle.color = "": "" )
+    particleArr.forEach(particle => {
+        if (particle !== entity)
+        if(entity.coords.x < particle.coords.x + particle.mass)
+        if(entity.coords.x > particle.coords.x - entity.mass)
+        if(entity.coords.y < particle.coords.y + particle.mass) 
+        if(entity.coords.y > particle.coords.y - entity.mass)
+        {
+            // entity.coords.x *= -1
+            // entity.coords.y *= -1
+            let accX = (entity.acc.x + particle.acc.x) / 2
+            let accY = (entity.acc.y + particle.acc.y) / 2
+            entity.acc.x = accX 
+            entity.acc.y = accY 
+            particle.acc.x = accX 
+            particle.acc.y = accY 
+        }
+    })
+
 }
 
 // Saving stuff below.
@@ -214,7 +244,7 @@ const load = _ => particleArr = JSON.parse(localStorage.getItem('particles'))
 // Stuff for running the darn thing.
 
 const start = _ => {
-    let i = 100
+    let i = 1
 
     particleArr = []
 

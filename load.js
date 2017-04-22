@@ -7,6 +7,7 @@ const loadScript = _ => {
 	script.setAttribute("src","main.js")
 	select("head").appendChild(script)
 	select('h1').innerText = "A Simple Aesthetic Particle engine"
+	select('.options').setAttribute('style','display:none;')
 }
 
 const canvas = select('canvas')
