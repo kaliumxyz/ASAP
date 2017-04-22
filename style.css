@@ -6,7 +6,7 @@ html, body, canvas {
 }
 @keyframes blink {
     0% {background: rgba(255,105,180,0.8);}
-    50% {background: black;}
+    50% {background: transparent;}
     100% {background: rgba(255,105,180,0.8);}
 }
 h1 {
@@ -37,7 +37,7 @@ h1 {
 	background: white;
 	color: black;
 }
-.curser {
+.cursor {
 	padding: 0;
 	animation: 1s blink step-end infinite;
 }

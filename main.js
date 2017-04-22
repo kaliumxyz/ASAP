@@ -7,6 +7,8 @@ const keys = []
 keys[32] = start
 keys[49] = save
 keys[50] = load
+keys[80] = pause
+keys[77] = mouseNext
 window.onkeydown = e => keys[e.keyCode]() && e
 
 /* TODO:
@@ -42,7 +44,7 @@ const settings = []
 
 
 
-let pause = false
+let paused = false
 
 
 const mouse = {
@@ -52,25 +54,40 @@ const mouse = {
             particleArr.push(particle(ev.clientX,ev.clientY))
         }},
     pew : ev => {
-        let i = 100
+        let i = 10
         while (i--){
             particleArr[i] = (particle(ev.clientX,ev.clientY))
         }
     },
     edit : ev => {
-        pause = !pause 
-        edit(ev.clientX,ev.clientY)
+        pause() 
+        // edit(ev.clientX,ev.clientY)
     }
 }
 
+const mouseDir = mouse.l
+
+function mouseNext() {
+    let flag
+    for (let mode in mouse) {
+        if (flag)
+        return window.onclick = mouse[mode]
+        flag = mouse[mode] === window.onclick
+    }
+    return window.onclick = mouse.emit
+}
+
+
+
 const scroll = ev => {
     console.log(ev)
-    scroller(ev.clientX,ev.clientY)
+    mouseNext()
+    //scroller(ev.clientX,ev.clientY)
 }
 
 window.onclick = mouse.emit
 
-// window.onmousewheel = scroll
+//window.onmousewheel = scroll
 
 const rand = i => {
     i = i || 1
@@ -91,7 +108,7 @@ const scroller = (x,y) => {
 
 
     select('body').appendChild(picker)
-    pause = !pause
+    pause()
 }
 
 // Editor
@@ -238,6 +255,10 @@ const collide = entity => {
 
 }
 
+function pause() {
+    paused = !paused
+}
+
 // Saving stuff below.
 
 function save(){
@@ -263,7 +284,7 @@ function start() {
 function main() {
     // Rate at which it runs doesn't matter.
     requestAnimationFrame(main)
-    if (!pause)
+    if (!paused)
     render.game()
 }
 
