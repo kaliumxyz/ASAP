@@ -23,37 +23,29 @@ window.onresize = _ => {
 window.onload = window.onresize
 
 // look I'll fix this later lol.
-function moveCursor() {
-	const options = select('.options')
-	options.innerHTML = options.innerHTML
-	.replace(/<span class="cursor.*?<\/span>/, "<span")
+const moveCursor = {
+	left: ev => {
+		const terminal = select('.terminal')
+		const match = terminal
+		.innerHTML
+		.replace(/(.)<span class="cursor">(.*?)<\/span>/,'<span class="cursor">$1</span>$2')
+		terminal.innerHTML = match 
+	},
+	right: ev => {
+		const terminal = select('.terminal')
+		const match = terminal
+		.innerHTML
+		.replace(/<span class="cursor">(.*?)<\/span>(.)/,'$1<span class="cursor">$2</span>')
+		terminal.innerHTML = match 
+	},
 }
-
-
-
-// maybe replace this with regex?
-// function moveCursor() {
-// 	const options = selectAll('.option')
-// 	const cursor = select('cursor')
-	
-// 	options.forEach(option => {
-// 		if (option === cursor){
-// 				select('cursor').setAttribute('class', 'option')
-// 				option.setAttribute('class', 'option cursor')
-// 				console.log(option)
-// 		}
-// 	})
-// }
-
-// function moveCursorLeft() {
-	// moveCursor
 
 
 const keys = []
 keys[32] = loadScript
-// keys[37] = moveCursor
+keys[37] = moveCursor.left
 // keys[38] = moveCursor
-// keys[39] = moveCursor
+keys[39] = moveCursor.right
 // keys[40] = moveCursor
 
 // call the function corresponding to the key.
