@@ -165,15 +165,15 @@ function edit(x, y) {
 	select('body').appendChild(editor)
 }
 
-// Location and acceleration, its not that hard :p.
+// Location and acceleration, its not that hard to have both :p.
 function findParticle(x, y) {
 	let temp
 	particleArr.forEach(particle => {
 		if (x < particle.coords.x + particle.mass)
-			if (x > particle.coords.x)
-				if (y < particle.coords.y + particle.mass)
-					if (y > particle.coords.y)
-						temp = particle
+		if (x > particle.coords.x)
+		if (y < particle.coords.y + particle.mass)
+		if (y > particle.coords.y)
+		temp = particle
 	})
 	return temp || false
 }
@@ -241,7 +241,6 @@ const gravity = {
 	wigglyRepell: entity => {
 		const force = 1
 		particleArr.forEach(particle => {
-
 			if (particle !== entity) {
 				let xDistance = particle.coords.x - entity.coords.x
 				let yDistance = particle.coords.y - entity.coords.y
@@ -252,12 +251,10 @@ const gravity = {
 		})
 	},
 	wiggly: entity => {
-		let force = 1
 		particleArr.forEach(particle => {
 			if (particle !== entity) {
 				let x = particle.coords.x - entity.coords.x
 				let y = particle.coords.y - entity.coords.y
-				//force *= entity.mass
 				particle.acc.x -= force / x
 				particle.acc.y -= force / y
 			}
@@ -270,7 +267,8 @@ const move = particle => {
 	particle.coords.y += particle.acc.y / particle.mass
 }
 
-// collision stuff here.
+/* code relating to collisions here :D. 
+ ***************************************/
 
 const checkWithinBounds = entity => {
 	if (entity.coords.x + entity.mass < 0)
@@ -290,19 +288,19 @@ const collisions = {
 	care: entity => {
 		particleArr.forEach(particle => {
 			if (particle !== entity)
-				if (entity.coords.x < particle.coords.x + particle.mass)
-					if (entity.coords.x > particle.coords.x - entity.mass)
-						if (entity.coords.y < particle.coords.y + particle.mass)
-							if (entity.coords.y > particle.coords.y - entity.mass) {
-								// entity.coords.x *= -1
-								// entity.coords.y *= -1
-								const accX = (entity.acc.x + particle.acc.x) / 2
-								const accY = (entity.acc.y + particle.acc.y) / 2
-								entity.acc.x = accX
-								entity.acc.y = accY
-								particle.acc.x = accX
-								particle.acc.y = accY
-							}
+			if (entity.coords.x < particle.coords.x + particle.mass)
+			if (entity.coords.x > particle.coords.x - entity.mass)
+			if (entity.coords.y < particle.coords.y + particle.mass)
+			if (entity.coords.y > particle.coords.y - entity.mass) {
+				// entity.coords.x *= -1
+				// entity.coords.y *= -1
+				const accX = (entity.acc.x + particle.acc.x) / 2
+				const accY = (entity.acc.y + particle.acc.y) / 2
+				entity.acc.x = accX
+				entity.acc.y = accY
+				particle.acc.x = accX
+				particle.acc.y = accY
+			}
 		})
 
 	}
@@ -312,7 +310,8 @@ function pause() {
 	paused = !paused
 }
 
-// Saving stuff below.
+/* saving and loading to and from the local storage.
+ ****************************************************/
 
 function save() {
 	localStorage.setItem('particles', JSON.stringify(particleArr))
@@ -322,7 +321,8 @@ function load() {
 	particleArr = JSON.parse(localStorage.getItem('particles'))
 }
 
-// Stuff for running the darn thing.
+/* Essentials for running the program.
+ **************************************/
 
 function start() {
 	let i = 100
