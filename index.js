@@ -8,7 +8,7 @@ function createWindow() {
 
 	//win.setIgnoreMouseEvents(true)
 
-	win.loadURL(`file://${__dirname}/asap/index.html`)
+	win.loadURL(`file://${__dirname}/app/index.html`)
 
 	// Opens the DevTools.
 	// win.webContents.openDevTools()

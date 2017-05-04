@@ -1,7 +1,7 @@
 {
   "name": "asap",
   "description": "pewpewpew",
-  "main": "main.js",
+  "main": "index.js",
   "author": "kalium",
   "license": "MIT",
   "dependencies": {
@@ -12,7 +12,8 @@
     "nodemon": "^1.11.0"
   },
   "scripts": {
-    "build-css": "node-sass --include-path sass assets\\sass\\* assets\\css\\",
-    "watch-css": "nodemon -e sass -x \"npm run build-css\""
+    "build-css": "node-sass --include-path sass style.sass style.css",
+    "watch-css": "nodemon -e sass -x \"npm run build-css\"",
+    "start": "electron ."
   }
 }
