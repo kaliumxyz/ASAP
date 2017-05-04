@@ -13,7 +13,7 @@ function createWindow() {
 	// Opens the DevTools.
 	// win.webContents.openDevTools()
 
-	win.on('closed', () => {
+	win.on('closed', _ => {
 		win = null
 	})}
 
@@ -23,6 +23,6 @@ function createWindow() {
 	app.on('ready', createWindow)
 
 	// Quit when all windows are closed.
-	app.on('window-all-closed', () => {
+	app.on('window-all-closed', _ => {
 		app.quit()
 	})

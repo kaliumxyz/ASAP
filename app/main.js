@@ -70,6 +70,11 @@ const mouse = {
 					particleArr.push(particle(mouse.clone.clientX, mouse.clone.clientY))
 			}
 		},
+		bow: ev => {
+			return _ => {
+					particleArr.push(particle(mouse.clone.clientX, mouse.clone.clientY))
+			}
+		},
 		// blackHole : ev => {
 		//     particleArr.push(particle(ev.clientX,ev.clientY,-100))
 		// }
@@ -100,7 +105,7 @@ const mouse = {
 
 function mouseNext() {
 	let flag
-	for (let mode in mouse.modus) {
+for (let mode in mouse.modus) {
 		if (flag)
 			return mouse.action = mouse.modus[mode]
 		flag = mouse.modus[mode] === window.onclick
