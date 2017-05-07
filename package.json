@@ -9,6 +9,8 @@
     "electron-packager": "^8.7.0"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
     "node-sass": "^4.5.2",
     "nodemon": "^1.11.0"
   },
@@ -16,6 +18,7 @@
     "build-css": "node-sass --include-path sass assets\\sass\\style.sass assets\\css\\style.css",
     "watch-css": "nodemon -e sass -x \"npm run build-css\"",
     "sass": "node-sass -w -r ./ -o ./",
+    "test": "mocha",
     "start": "electron ."
   }
 }
