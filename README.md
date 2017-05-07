@@ -15,11 +15,15 @@ $ cd asap
 $ npm
 ```
 
-
 ## usage
 Just run electron in the dir.
 ```
 $ electron .
+```
+
+## Tests
+```
+$ npm test
 ```
 
 ## license

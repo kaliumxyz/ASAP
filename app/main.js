@@ -11,6 +11,7 @@ keys[77] = mouseNext
 
 /* TODO:
  * - unit testing.
+ *   + basic is implemented
  * - something more fun, sync it up with a node server somehow?
  * - multiple particle types:
  *   -  default (atoms?)
@@ -26,6 +27,7 @@ keys[77] = mouseNext
  *     - AI in a particle engine? yes, go fuck yourself if you don't know about steering behaviour.
  *     - seriously go feel a wicked degree of shame mate.
  * - mouse / pointer modes:
+ *   - touchscreen.
  *   - create / emit.
  *   - gravitate.
  *   - contain.
@@ -56,8 +58,8 @@ function rand(i) {
 	return i * Math.random()
 }
 
-/* Anything relating to the mouse
- *********************************/
+/* Anything relating to the mouse events.
+ *****************************************/
 
 const mouse = {
 	clone: {
@@ -72,7 +74,7 @@ const mouse = {
 		},
 		bow: ev => {
 			return _ => {
-					particleArr.push(particle(mouse.clone.clientX, mouse.clone.clientY))
+					//particleArr.push(particle(mouse.clone.clientX, mouse.clone.clientY))
 			}
 		},
 		// blackHole : ev => {
@@ -103,6 +105,7 @@ const mouse = {
 	action: '',
 }
 
+
 function mouseNext() {
 	let flag
 for (let mode in mouse.modus) {
@@ -122,6 +125,7 @@ const scroll = ev => {
 	//scroller(ev.clientX,ev.clientY)
 }
 
+// This creates an... action emitter?
 window.onmousedown = ev => actions.push(mouse.action(ev))
 
 window.onmouseup = ev => actions.pop()
@@ -130,13 +134,20 @@ window.onmousemove = ev => mouse.clone = ev
 
 window.onclick = ev => mouse.clone = ev
 
-// Great way to create emittors but nothing more, lets swap to using a mouse object.
-//window.onmousedown = ev => actions.push(mouse.emit(ev))
+/* Anything related to touch events.
+ ************************************/
 
-//window.onmouseup = ev => actions.pop()
+// Touchscreen handles very different from a mouse, make seperate actions!
+const touch = {}
 
-//window.onmousewheel = scroll
+window.ontouchstart = window.onmousedown
 
+window.ontouchend = window.onmouseup
+
+window.ontouchmove = window.onmousemove
+
+// When does this even fire?
+window.ontouchcancel = window.ontouchend
 
 
 

@@ -1,11 +1,8 @@
-const fs = require('fs')
-const chai = require('chai')
-const assert = chai.assert
-//const asap = require('../')
+import test from 'ava'
 
-// todo: add real unit tests
-describe('true', function () {
-    it('equals true', function () {
-        assert.equal(true, true)
-    })
+// Testing ava :3
+test('The test that passes', t => {
+    t.pass()
 })
+
+test.todo('write unit tests :p')
