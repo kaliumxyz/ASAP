@@ -2,7 +2,8 @@ html, body, canvas {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: 'Roboto Mono', monospace; }
+  font-family: 'Roboto Mono', monospace;
+  background: white; }
 
 @keyframes blink {
   0% {
@@ -25,16 +26,26 @@ h1 {
   user-select: none; }
 
 .center {
+  top: 280px;
   position: fixed;
   width: 100%; }
 
-.options {
-  background: black;
-  color: white;
+.terminal {
   margin: 0 auto;
   padding: 10px;
   width: 540px;
-  user-select: none; }
+  user-select: none;
+  z-index: -1; }
+
+.terminal-main {
+  background: black;
+  color: white;
+  white-space: pre-wrap; }
+
+.terminal-ghost {
+  color: transparent;
+  position: absolute;
+  white-space: pre-wrap; }
 
 .option {
   padding: 0;

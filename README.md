@@ -9,7 +9,7 @@ Just clone the repo or download the files.
 ```
 $ git clone https://github.com/kaliumxyz/asap
 ```
-Then go to the dir and run nmp
+Then go to the dir and run npm
 ```
 $ cd asap
 $ npm
