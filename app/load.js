@@ -12,7 +12,7 @@ const loadScript = _ => {
 	select("head").appendChild(script)
 	select('h1').innerText = "A Simple Aesthetic Particle engine"
 	select('.options').setAttribute('style', 'display:none;')
-	select('.terminal-ghost').remove()
+	select('.terminal-ghost').setAttribute('style', 'display:none;')
 }
 
 const canvas = select('canvas')
@@ -36,7 +36,7 @@ window.onload = window.onresize
 let currentPosition = 2
 
 // look I'll fix this later lol.
-const moveCursor = {
+const term = {Cursor:{
 	left: ev => {
 		const terminal = select('.terminal-main')
 		const ghost = select('.terminal-ghost')
@@ -57,15 +57,20 @@ const moveCursor = {
 			)
 		ghost.innerHTML = match
 	},
+	enter: ev => {
+		if(currentPosition>20 && currentPosition<16)
+		console.log('blah')
+	}
+},
 }
-
 
 const keys = []
 keys[32] = loadScript
-keys[37] = moveCursor.left
+keys[37] = term.Cursor.left
 // keys[38] = moveCursor
-keys[39] = moveCursor.right
+keys[39] = term.Cursor.right
 // keys[40] = moveCursor
+keys[13] = term.Cursor.enter
 
 // call the function corresponding to the key.
 window.onkeydown = e => keys[e.keyCode]()
