@@ -4,7 +4,13 @@ let win
 
 function createWindow() {
 	// Create the browser window.
-	win = new BrowserWindow({ width: 800, height: 600, frame: false, transparent: true, fullscreen: true, minimizable: false})
+	win = new BrowserWindow({
+		frame: false,
+		transparent: true,
+		fullscreen: true,
+		thickFrame: false,
+		fullscreenable: true,
+		})
 
 	//win.setIgnoreMouseEvents(true)
 
@@ -15,7 +21,11 @@ function createWindow() {
 
 	win.on('closed', _ => {
 		win = null
-	})}
+	})
+	win.on('resize', _ => {
+		win.setFullScreen(true)
+	})
+}
 
 	// This method will be called when Electron has finished
 	// initialization and is ready to create browser windows.

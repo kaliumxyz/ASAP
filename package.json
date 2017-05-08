@@ -15,7 +15,7 @@
   },
   "scripts": {
     "watch-css": "node-sass -w -r ./app/assets/sass -o ./app/assets/css",
-    "test": "ave",
+    "test": "ava",
     "start": "electron ."
   }
 }

@@ -27,4 +27,4 @@ $ npm test
 ```
 
 ## license
-MIT © [Kalium](kalium.xyz)
+MIT © [Kalium](https://kalium.xyz)
