@@ -1,12 +1,18 @@
 "use strict"
 
-const select = selector => document.querySelector(selector)
+function select(selector) {
+	return document.querySelector(selector)
+}
 
-const selectAll = selector => document.querySelectorAll(selector)
+function selectAll(selector) {
+	return document.querySelectorAll(selector)
+}
 
-const replaceChar = (string, substring, index) => string.substr(0, index - 1) + substring + string.substr(index)
+function replaceChar(string, substring, index) {
+	return string.substr(0, index - 1) + substring + string.substr(index)
+}
 
-const loadScript = _ => {
+function loadScript() {
 	let script = document.createElement("script")
 	script.setAttribute("src", "main.js")
 	select("head").appendChild(script)
@@ -16,6 +22,12 @@ const loadScript = _ => {
 }
 
 const canvas = select('canvas')
+
+const config = {
+	bounds: true,
+	gravity: "wiggly",
+	collisions: "care"
+}
 
 
 window.onresize = _ => {
@@ -58,8 +70,24 @@ const term = {Cursor:{
 		ghost.innerHTML = match
 	},
 	enter: ev => {
-		if(currentPosition>20 && currentPosition<16)
-		console.log('blah')
+		if(10 < currentPosition && 14 > currentPosition) {
+			config.bounds != config.bounds
+		}
+		if(23 < currentPosition && 32 > currentPosition) {
+			config.gravity = "wiggly"
+		}
+		if(32 < currentPosition && 46 > currentPosition) {
+			config.gravity = "wigglyInverse"
+		}
+		if(48 < currentPosition && 57 > currentPosition) {
+			config.gravity = "regular"
+		}
+		if(70 < currentPosition && 79 > currentPosition) {
+			config.collisions = "boring"
+		}
+		if(79 < currentPosition && 86 > currentPosition) {
+			config.collisions = "care"
+		}
 	}
 },
 }

@@ -38,12 +38,14 @@ keys[77] = mouseNext
  *   - create gravity well. 
  * - Adding title randomizer.
  * - Add angles.
+ * - Physics engine.
+ *   - engine in webasm.
  */
 
 /* Global variables.
  ********************/
 
-const settings = {}
+const settings = {type: "square"}
 
 let actions = []
 
@@ -53,8 +55,13 @@ let paused = false
 /* universal functions.
  ***********************/
 
-function rand(i) {
-	i = i || 1
+/**
+ * returns a random number
+ * @param {Int} i 
+ * @return {Int}
+ */
+
+function rand(i = 1) {
 	return i * Math.random()
 }
 
@@ -69,7 +76,7 @@ const mouse = {
 	modus: {
 		emit: ev => {
 			return _ => {
-					particleArr.push(particle(mouse.clone.clientX, mouse.clone.clientY))
+					particleArr.push(new Particle(mouse.clone.clientX, mouse.clone.clientY))
 			}
 		},
 		bow: ev => {
@@ -105,6 +112,9 @@ const mouse = {
 	action: '',
 }
 
+/**
+ * Change the mousemode to the next in the list.
+ */
 
 function mouseNext() {
 	let flag
@@ -118,8 +128,12 @@ for (let mode in mouse.modus) {
 
 mouse.action = mouse.modus.emit
 
+/**
+ * Scroll event handler.
+ * @param {scrollEvent} ev 
+ */
 
-function scroll(ev) {
+function onScroll(ev) {
 	console.log(ev)
 	mouseNext()
 	//scroller(ev.clientX,ev.clientY)
@@ -217,7 +231,7 @@ class Particle {
 }
 
 // location to store the refrences to the particles
-const particleArr = []
+let particleArr = []
 
 // Overly big render object, might be smarter to do this as a function instead.
 const render = {
@@ -243,7 +257,7 @@ const render = {
 			gravity.wiggly(particle)
 			move(particle)
 			collisions.care(particle)
-			render.square(particle)
+			render[settings.type](particle)
 		})
 
 	}
@@ -255,7 +269,16 @@ const render = {
 
 const gravity = {
 	boring: entity => {
+		particleArr.map(particle => {
+			if (particle !== entity) {
+				let x = particle.coords.x - entity.coords.x
+				let y = particle.coords.y - entity.coords.y
+				force *= entity.mass
+				particle.acc.x -= force / x
+				particle.acc.y -= force / y
+			}
 
+		})
 	},
 	wigglyRepell: entity => {
 		const force = 1
@@ -263,7 +286,7 @@ const gravity = {
 			if (particle !== entity) {
 				let xDistance = particle.coords.x - entity.coords.x
 				let yDistance = particle.coords.y - entity.coords.y
-				force * entity.mass
+				force *= entity.mass
 				particle.acc.x += force / xDistance
 				particle.acc.y += force / yDistance
 			}
@@ -351,7 +374,7 @@ function start() {
 
 	while (i--)
 		particleArr.push(new Particle())
-	console.log(particleArr)
+	// console.log(particleArr)
 }
 
 function main() {
