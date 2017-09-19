@@ -6,7 +6,7 @@ function createWindow() {
 	// Create the browser window.
 	win = new BrowserWindow({
 		frame: false,
-		transparent: true,
+		// transparent: true,
 		fullscreen: true,
 		thickFrame: false,
 		fullscreenable: true,
@@ -14,7 +14,7 @@ function createWindow() {
 
 	//win.setIgnoreMouseEvents(true)
 
-	win.loadURL(`file://${__dirname}/app/index.html`)
+	win.loadURL(`file://${__dirname}/index.html`)
 
 	// Opens the DevTools.
 	// win.webContents.openDevTools()

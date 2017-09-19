@@ -119,7 +119,7 @@ for (let mode in mouse.modus) {
 mouse.action = mouse.modus.emit
 
 
-const scroll = ev => {
+function scroll(ev) {
 	console.log(ev)
 	mouseNext()
 	//scroller(ev.clientX,ev.clientY)
@@ -178,7 +178,12 @@ function edit(x, y) {
 	select('body').appendChild(editor)
 }
 
-// Location and acceleration, its not that hard to have both :p.
+/**
+ * Finds any particle at the X and Y coords given, returns the last particle found.
+ * If no particles are found, returns false.
+ * @param {Int} x 
+ * @param {Int} y 
+ */
 function findParticle(x, y) {
 	let temp
 	particleArr.forEach(particle => {
@@ -191,27 +196,28 @@ function findParticle(x, y) {
 	return temp || false
 }
 
-// Particle constructor.
-const particle = (x, y, mass) => {
-	return {
-		coords: {
+/**
+ * Particle constructor.
+ */
+class Particle {
+	constructor(x, y, mass) {
+		this.coords = {
 			x: x || rand(canvas.width),
 			y: y || rand(canvas.height)
-		},
-		acc: {
+		}
+		this.acc = {
 			x: rand(2) - 1,
 			y: rand(2) - 1
-		},
-		color: `hsla(${rand(360)},100%,58%,1)`,
-		mass: mass || 20 + rand(80),
-		type: 'particle',
-		// It might be a wise move to let the behaviour be independent of the looks.
-		shape: 'round',
+		}
+		this.color = `hsla(${rand(360)},100%,58%,1)`
+		this.mass = mass || 20 + rand(80)
+		this.type = 'particle'
+		this.shape = 'round'
 	}
 }
 
-// A place to store all these particles... I need to sanitize the naming conventions.
-let particleArr = []
+// location to store the refrences to the particles
+const particleArr = []
 
 // Overly big render object, might be smarter to do this as a function instead.
 const render = {
@@ -276,7 +282,7 @@ const gravity = {
 	}
 }
 
-const move = particle => {
+function move(particle) {
 	particle.coords.x += particle.acc.x / particle.mass
 	particle.coords.y += particle.acc.y / particle.mass
 }
@@ -284,7 +290,7 @@ const move = particle => {
 /* code relating to collisions here :D. 
  ***************************************/
 
-const checkWithinBounds = entity => {
+function checkWithinBounds(entity) {
 	if (entity.coords.x + entity.mass < 0)
 		entity.coords.x = canvas.width
 	if (entity.coords.x > canvas.width)
@@ -296,7 +302,7 @@ const checkWithinBounds = entity => {
 }
 
 const collisions = {
-	boring: entity => {
+	realistic: entity => {
 
 	},
 	care: entity => {
@@ -344,7 +350,7 @@ function start() {
 	particleArr = []
 
 	while (i--)
-		particleArr.push(particle())
+		particleArr.push(new Particle())
 	console.log(particleArr)
 }
 
