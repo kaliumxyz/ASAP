@@ -14,8 +14,9 @@ keys[77] = mouseNext
  *   + basic is implemented
  * - something more fun, sync it up with a node server somehow?
  * - multiple particle types:
- *   -  default (atoms?)
- *   -  mist????
+ *   - default (atoms?)
+ *   - mist????
+ *   - walls, immutable, indistructable.
  * - more shiny good stuff.
  * - GUI
  * - actual particle behaviour:
@@ -214,7 +215,7 @@ function findParticle(x, y) {
  * Particle constructor.
  */
 class Particle {
-	constructor(x, y, mass) {
+	constructor(x, y, mass, color) {
 		this.coords = {
 			x: x || rand(canvas.width),
 			y: y || rand(canvas.height)
@@ -223,7 +224,7 @@ class Particle {
 			x: rand(2) - 1,
 			y: rand(2) - 1
 		}
-		this.color = `hsla(${rand(360)},100%,58%,1)`
+		this.color = color || `hsla(${rand(360)},100%,58%,1)`
 		this.mass = mass || 20 + rand(80)
 		this.type = 'particle'
 		this.shape = 'round'
@@ -254,10 +255,10 @@ const render = {
 		context.fillRect(0, 0, canvas.width, canvas.height)
 		particleArr.forEach(particle => {
 			checkWithinBounds(particle)
-			gravity.wiggly(particle)
+			gravity[config.gravity](particle)
 			move(particle)
-			collisions.care(particle)
-			render[settings.type](particle)
+			collisions[config.collisions](particle)
+			render[config.type](particle)
 		})
 
 	}
@@ -269,6 +270,7 @@ const render = {
 
 const gravity = {
 	boring: entity => {
+		const force = 1
 		particleArr.map(particle => {
 			if (particle !== entity) {
 				let x = particle.coords.x - entity.coords.x
@@ -280,7 +282,7 @@ const gravity = {
 
 		})
 	},
-	wigglyRepell: entity => {
+	wigglyInverse: entity => {
 		const force = 1
 		particleArr.forEach(particle => {
 			if (particle !== entity) {
@@ -325,8 +327,23 @@ function checkWithinBounds(entity) {
 }
 
 const collisions = {
-	realistic: entity => {
-
+	boring: entity => {
+		particleArr.forEach(particle => {
+			if (particle !== entity)
+			if (entity.coords.x < particle.coords.x + particle.mass)
+			if (entity.coords.x > particle.coords.x - entity.mass)
+			if (entity.coords.y < particle.coords.y + particle.mass)
+			if (entity.coords.y > particle.coords.y - entity.mass) {
+				entity.coords.x *= -1
+				entity.coords.y *= -1
+				const accX = (entity.acc.x + particle.acc.x) / 3
+				const accY = (entity.acc.y + particle.acc.y) / 3
+				entity.acc.x = accX
+				entity.acc.y = accY
+				particle.acc.x = accX
+				particle.acc.y = accY
+			}
+		})
 	},
 	care: entity => {
 		particleArr.forEach(particle => {

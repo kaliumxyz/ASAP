@@ -26,7 +26,8 @@ const canvas = select('canvas')
 const config = {
 	bounds: true,
 	gravity: "wiggly",
-	collisions: "care"
+	collisions: "care",
+	type: "square"
 }
 
 
@@ -80,13 +81,19 @@ const term = {Cursor:{
 			config.gravity = "wigglyInverse"
 		}
 		if(48 < currentPosition && 57 > currentPosition) {
-			config.gravity = "regular"
+			config.gravity = "boring"
 		}
 		if(70 < currentPosition && 79 > currentPosition) {
 			config.collisions = "boring"
 		}
 		if(79 < currentPosition && 86 > currentPosition) {
 			config.collisions = "care"
+		}
+		if(90 < currentPosition && 100 > currentPosition) {
+			config.type = "particle"
+		}
+		if(100 < currentPosition && 109 > currentPosition) {
+			config.type = "square"
 		}
 	}
 },
