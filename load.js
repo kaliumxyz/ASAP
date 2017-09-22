@@ -51,22 +51,26 @@ let currentPosition = 2
 // look I'll fix this later lol.
 const term = {Cursor:{
 	left: ev => {
+		if(currentPosition < 3)
+		return
 		const terminal = select('.terminal-main')
 		const ghost = select('.terminal-ghost')
 		const match = replaceChar(
 			terminal.innerText,
 			`<span class="cursor">${terminal.innerText[currentPosition]}</span>`,
-			currentPosition--
+			--currentPosition
 			)
 		ghost.innerHTML = match
 	},
 	right: ev => {
 		const terminal = select('.terminal-main')
+		if(currentPosition > terminal.innerText.length - 3)
+		return
 		const ghost = select('.terminal-ghost')
 		const match = replaceChar(
 			terminal.innerText,
 			`<span class="cursor">${terminal.innerText[currentPosition]}</span>`,
-			currentPosition++
+			++currentPosition
 			)
 		ghost.innerHTML = match
 	},
@@ -112,16 +116,25 @@ const term = {Cursor:{
 	}
 }
 
-let keys = []
+// the highest key number is 222, we need that many functions for our handler
+let keys = new Array(222)
+keys.fill(console.log)
+
+// on space start
 keys[32] = loadScript
+// 37 = left, 72 = h
 keys[37] = term.Cursor.left
-// keys[38] = moveCursor
+keys[72] = term.Cursor.left
+// 38 = up
+// keys[38] = term.Cursor.up
+// 39 = right arrow, 76 = l
 keys[39] = term.Cursor.right
-// keys[40] = moveCursor
+keys[76] = term.Cursor.right
+// keys[40] = term.Cursor.down
 keys[13] = term.Cursor.enter
 
 // call the function corresponding to the key
-window.onkeydown = e => keys[e.keyCode]()
+window.onkeydown = e => keys[e.keyCode](e)
 window.onclick = loadScript
 
 //document.querySelectorAll('.option').forEach(el => el.onclick = ev => el.setAttribute('class','active'))
