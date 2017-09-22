@@ -72,6 +72,8 @@ const term = {Cursor:{
 	},
 	enter: ev => {
 		if(10 < currentPosition && 14 > currentPosition) {
+			if(config.bounds)
+			selectAll(".option-bounds").forEach(el => el.classList.toggle('active'))
 			config.bounds != config.bounds
 		}
 		if(23 < currentPosition && 32 > currentPosition) {
@@ -84,22 +86,33 @@ const term = {Cursor:{
 			config.gravity = "boring"
 		}
 		if(70 < currentPosition && 79 > currentPosition) {
-			config.collisions = "boring"
+			term.types.bool(".option-collisions", "boring", config.collisions)
 		}
-		if(79 < currentPosition && 86 > currentPosition) {
-			config.collisions = "care"
+		if(79 < currentPosition && 89 > currentPosition) {
+			term.types.bool(".option-collisions", "care", config.collisions)
 		}
 		if(90 < currentPosition && 100 > currentPosition) {
+			if(config.type !== "particle")
+			selectAll(".option-type").forEach(el => el.classList.toggle('active'))
 			config.type = "particle"
 		}
 		if(100 < currentPosition && 109 > currentPosition) {
+			if(config.type !== "square")
+			selectAll(".option-type").forEach(el => el.classList.toggle('active'))
 			config.type = "square"
 		}
 	}
 },
+	types: {
+		bool: (classname, value, item) => {
+			if(item !== value)
+			selectAll(classname).forEach(el => el.classList.toggle('active'))
+			item = value
+		}
+	}
 }
 
-const keys = []
+let keys = []
 keys[32] = loadScript
 keys[37] = term.Cursor.left
 // keys[38] = moveCursor
@@ -107,7 +120,7 @@ keys[39] = term.Cursor.right
 // keys[40] = moveCursor
 keys[13] = term.Cursor.enter
 
-// call the function corresponding to the key.
+// call the function corresponding to the key
 window.onkeydown = e => keys[e.keyCode]()
 window.onclick = loadScript
 

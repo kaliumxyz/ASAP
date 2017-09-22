@@ -256,9 +256,9 @@ const render = {
 		particleArr.forEach(particle => {
 			checkWithinBounds(particle)
 			gravity[config.gravity](particle)
-			move(particle)
 			collisions[config.collisions](particle)
-			render[config.type](particle)
+			move(particle)
+			render[particle.type](particle)
 		})
 
 	}
@@ -385,7 +385,7 @@ function load() {
  **************************************/
 
 function start() {
-	let i = 100
+	let i = 20
 
 	particleArr = []
 
