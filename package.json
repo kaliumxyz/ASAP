@@ -14,7 +14,7 @@
     "nodemon": "^1.11.0"
   },
   "scripts": {
-    "watch-css": "node-sass -w -r ./app/assets/sass -o ./app/assets/css",
+    "watch-css": "node-sass -w -r ./assets/sass -o ./assets/css",
     "test": "ava",
     "start": "electron ."
   }

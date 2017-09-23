@@ -119,11 +119,11 @@ const mouse = {
 
 function mouseNext() {
 	let flag
-for (let mode in mouse.modus) {
-		if (flag)
-			return mouse.action = mouse.modus[mode]
-		flag = mouse.modus[mode] === window.onclick
-	}
+		for (let mode in mouse.modus) {
+			if (flag)
+				return mouse.action = mouse.modus[mode]
+			flag = mouse.modus[mode] === mouse.action
+		}
 	return mouse.action = mouse.modus.emit
 }
 
@@ -149,13 +149,15 @@ window.onmousemove = ev => mouse.clone = ev
 
 window.onclick = ev => mouse.clone = ev
 
+window.onscroll = onScroll
+
 /* Anything related to touch events.
  ************************************/
 
 // Touchscreen handles very different from a mouse, make seperate actions!
 const touch = {}
 
-window.ontouchstart = window.onmousedown
+// window.ontouchstart = window.onmousedown
 
 window.ontouchend = window.onmouseup
 

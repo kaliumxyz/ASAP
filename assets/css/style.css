@@ -35,7 +35,11 @@ h1 {
   padding: 10px;
   width: 540px;
   user-select: none;
-  z-index: -1; }
+  z-index: -1;
+  line-height: 0.8em; }
+  .terminal .line {
+    margin: 0;
+    padding: 0; }
 
 .terminal-main {
   background: black;
