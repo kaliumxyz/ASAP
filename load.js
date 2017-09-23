@@ -27,88 +27,82 @@ const config = {
 	bounds: true,
 	gravity: "wiggly",
 	collisions: "care",
-	type: "square"
+	type: "square",
+	G: 0.01
 }
 
 
-window.onresize = _ => {
-	canvas.width = window.innerWidth
-	canvas.height = window.innerHeight
-	const terminal = select('.terminal-main')
-	const ghost = select('.terminal-ghost')
-	const match = replaceChar(
-		terminal.innerText,
-		`<span class="cursor">${terminal.innerText[currentPosition]}</span>`,
-		currentPosition
-		)
-	ghost.innerHTML = match
-}
 
-window.onload = window.onresize
+// terminal object
+const term = {
+	terminal: select('.terminal-main'),
+	ghost: select('.terminal-ghost'),
+	cursor: {
+		left: ev => {
+			if(term.cursor.position < 2)
+			return
+			term.cursor.location(--term.cursor.position)
+		},
+		right: ev => {
+			if(term.cursor.position > term.terminal.innerText.length - 4)
+			return
+			term.cursor.location(++term.cursor.position)
+		},
+		up: ev => {
 
-let currentPosition = 2
+		},
+		down: ev => {
 
-// look I'll fix this later lol.
-const term = {Cursor:{
-	left: ev => {
-		if(currentPosition < 3)
-		return
-		const terminal = select('.terminal-main')
-		const ghost = select('.terminal-ghost')
-		const match = replaceChar(
-			terminal.innerText,
-			`<span class="cursor">${terminal.innerText[currentPosition]}</span>`,
-			--currentPosition
-			)
-		ghost.innerHTML = match
+		},
+		enter: ev => {
+			if(9 < term.cursor.position && 14 > term.cursor.position) {
+				if(config.bounds)
+				selectAll(".option-bounds").forEach(el => el.classList.toggle('active'))
+				config.bounds != config.bounds
+			}
+			if(23 < term.cursor.position && 32 > term.cursor.position) {
+				config.gravity = "wiggly"
+			}
+			if(32 < term.cursor.position && 46 > term.cursor.position) {
+				config.gravity = "wigglyInverse"
+			}
+			if(48 < term.cursor.position && 57 > term.cursor.position) {
+				config.gravity = "boring"
+			}
+			if(70 < term.cursor.position && 79 > term.cursor.position) {
+				if(config.collisions !== "boring")
+				selectAll(".option-collisions").forEach(el => el.classList.toggle('active'))
+				config.collisions = "boring"
+			}
+			if(79 < term.cursor.position && 89 > term.cursor.position) {
+				if(config.collisions !== "care")
+				selectAll(".option-collisions").forEach(el => el.classList.toggle('active'))
+				config.collisions = "care"
+			}
+			if(90 < term.cursor.position && 100 > term.cursor.position) {
+				if(config.type !== "particle")
+				selectAll(".option-type").forEach(el => el.classList.toggle('active'))
+				config.type = "particle"
+			}
+			if(100 < term.cursor.position && 109 > term.cursor.position) {
+				if(config.type !== "square")
+				selectAll(".option-type").forEach(el => el.classList.toggle('active'))
+				config.type = "square"
+			}
+		},
+		location: l => {
+			l = l || term.cursor.position
+			const match = replaceChar(
+				term.terminal.innerText,
+				`<span class="cursor">${term.terminal.innerText[l++]}</span>`,
+				l
+				)
+			term.ghost.innerHTML = match
+		},
+		position: 1
 	},
-	right: ev => {
-		const terminal = select('.terminal-main')
-		if(currentPosition > terminal.innerText.length - 3)
-		return
-		const ghost = select('.terminal-ghost')
-		const match = replaceChar(
-			terminal.innerText,
-			`<span class="cursor">${terminal.innerText[currentPosition]}</span>`,
-			++currentPosition
-			)
-		ghost.innerHTML = match
-	},
-	enter: ev => {
-		if(10 < currentPosition && 14 > currentPosition) {
-			if(config.bounds)
-			selectAll(".option-bounds").forEach(el => el.classList.toggle('active'))
-			config.bounds != config.bounds
-		}
-		if(23 < currentPosition && 32 > currentPosition) {
-			config.gravity = "wiggly"
-		}
-		if(32 < currentPosition && 46 > currentPosition) {
-			config.gravity = "wigglyInverse"
-		}
-		if(48 < currentPosition && 57 > currentPosition) {
-			config.gravity = "boring"
-		}
-		if(70 < currentPosition && 79 > currentPosition) {
-			term.types.bool(".option-collisions", "boring", config.collisions)
-		}
-		if(79 < currentPosition && 89 > currentPosition) {
-			term.types.bool(".option-collisions", "care", config.collisions)
-		}
-		if(90 < currentPosition && 100 > currentPosition) {
-			if(config.type !== "particle")
-			selectAll(".option-type").forEach(el => el.classList.toggle('active'))
-			config.type = "particle"
-		}
-		if(100 < currentPosition && 109 > currentPosition) {
-			if(config.type !== "square")
-			selectAll(".option-type").forEach(el => el.classList.toggle('active'))
-			config.type = "square"
-		}
-	}
-},
 	types: {
-		bool: (classname, value, item) => {
+		bool: function (classname, value, item) {
 			if(item !== value)
 			selectAll(classname).forEach(el => el.classList.toggle('active'))
 			item = value
@@ -116,22 +110,30 @@ const term = {Cursor:{
 	}
 }
 
+window.onresize = _ => {
+	canvas.width = window.innerWidth
+	canvas.height = window.innerHeight
+	term.cursor.location()
+}
+
+window.onload = window.onresize
+
 // the highest key number is 222, we need that many functions for our handler
-let keys = new Array(222)
+const keys = new Array(222)
 keys.fill(console.log)
 
 // on space start
 keys[32] = loadScript
 // 37 = left, 72 = h
-keys[37] = term.Cursor.left
-keys[72] = term.Cursor.left
+keys[37] = term.cursor.left
+keys[72] = term.cursor.left
 // 38 = up
 // keys[38] = term.Cursor.up
 // 39 = right arrow, 76 = l
-keys[39] = term.Cursor.right
-keys[76] = term.Cursor.right
+keys[39] = term.cursor.right
+keys[76] = term.cursor.right
 // keys[40] = term.Cursor.down
-keys[13] = term.Cursor.enter
+keys[13] = term.cursor.enter
 
 // call the function corresponding to the key
 window.onkeydown = e => keys[e.keyCode](e)

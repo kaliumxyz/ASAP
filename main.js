@@ -77,7 +77,7 @@ const mouse = {
 	modus: {
 		emit: ev => {
 			return _ => {
-					particleArr.push(new Particle(mouse.clone.clientX, mouse.clone.clientY))
+					particleArr.push(new Particle({x:mouse.clone.clientX, y:mouse.clone.clientY, type: config.type}))
 			}
 		},
 		bow: ev => {
@@ -96,12 +96,12 @@ const mouse = {
 		// },
 		gravitate: ev => {
 			return _ => {
-				gravity.wiggly({
+				gravity.boring({
 					coords: {
 						x: ev.clientX,
 						y: ev.clientY,
 					},
-					mass: 1000000000000,
+					mass: 100000,
 				})
 			}
 		},
@@ -127,7 +127,7 @@ for (let mode in mouse.modus) {
 	return mouse.action = mouse.modus.emit
 }
 
-mouse.action = mouse.modus.emit
+mouse.action = mouse.modus.gravitate
 
 /**
  * Scroll event handler.
@@ -215,18 +215,18 @@ function findParticle(x, y) {
  * Particle constructor.
  */
 class Particle {
-	constructor(x, y, mass, color) {
+	constructor(props = {x, y , mass, color, type}) {
 		this.coords = {
-			x: x || rand(canvas.width),
-			y: y || rand(canvas.height)
+			x: props.x || rand(canvas.width),
+			y: props.y || rand(canvas.height)
 		}
-		this.acc = {
+		this.vol = {
 			x: rand(2) - 1,
 			y: rand(2) - 1
 		}
-		this.color = color || `hsla(${rand(360)},100%,58%,1)`
-		this.mass = mass || 20 + rand(80)
-		this.type = 'particle'
+		this.color = props.color || `hsla(${rand(360)},100%,58%,1)`
+		this.mass = props.mass || 20 + rand(80)
+		this.type = props.type || 'particle'
 		this.shape = 'round'
 	}
 }
@@ -255,8 +255,8 @@ const render = {
 		context.fillRect(0, 0, canvas.width, canvas.height)
 		particleArr.forEach(particle => {
 			checkWithinBounds(particle)
-			gravity[config.gravity](particle)
 			collisions[config.collisions](particle)
+			gravity[config.gravity](particle)
 			move(particle)
 			render[particle.type](particle)
 		})
@@ -268,48 +268,50 @@ const render = {
 /* Anything and everything related to moving stuff around.
  **********************************************************/
 
+
 const gravity = {
 	boring: entity => {
-		const force = 1
-		particleArr.map(particle => {
-			if (particle !== entity) {
+		particleArr.forEach(particle => {
+			if (particle != entity) {
 				let x = particle.coords.x - entity.coords.x
 				let y = particle.coords.y - entity.coords.y
-				force *= entity.mass
-				particle.acc.x -= force / x
-				particle.acc.y -= force / y
+				let r = x * x + y * y
+				let force = ((entity.mass + particle.mass) / r) * config.G
+				particle.vol.x -= force * x
+				particle.vol.y -= force * y
 			}
 
 		})
 	},
 	wigglyInverse: entity => {
-		const force = 1
+		let force = 1
 		particleArr.forEach(particle => {
-			if (particle !== entity) {
+			if (particle != entity) {
 				let xDistance = particle.coords.x - entity.coords.x
 				let yDistance = particle.coords.y - entity.coords.y
-				force *= entity.mass
-				particle.acc.x += force / xDistance
-				particle.acc.y += force / yDistance
+			force *= entity.mass
+				particle.vol.x += force / xDistance
+				particle.vol.y += force / yDistance
 			}
 		})
 	},
 	wiggly: entity => {
-		const force = 1
+		let force = 1
 		particleArr.forEach(particle => {
-			if (particle !== entity) {
+			if (particle != entity) {
 				let x = particle.coords.x - entity.coords.x
 				let y = particle.coords.y - entity.coords.y
-				particle.acc.x -= force / x
-				particle.acc.y -= force / y
+				// force *= entity.mass
+				particle.vol.x -= force / x
+				particle.vol.y -= force / y
 			}
 		})
-	}
+	},
 }
 
 function move(particle) {
-	particle.coords.x += particle.acc.x / particle.mass
-	particle.coords.y += particle.acc.y / particle.mass
+	particle.coords.x += particle.vol.x / particle.mass
+	particle.coords.y += particle.vol.y / particle.mass
 }
 
 /* code relating to collisions here :D. 
@@ -329,37 +331,37 @@ function checkWithinBounds(entity) {
 const collisions = {
 	boring: entity => {
 		particleArr.forEach(particle => {
-			if (particle !== entity)
+			if (particle != entity)
 			if (entity.coords.x < particle.coords.x + particle.mass)
 			if (entity.coords.x > particle.coords.x - entity.mass)
 			if (entity.coords.y < particle.coords.y + particle.mass)
 			if (entity.coords.y > particle.coords.y - entity.mass) {
-				entity.coords.x *= -1
-				entity.coords.y *= -1
-				const accX = (entity.acc.x + particle.acc.x) / 3
-				const accY = (entity.acc.y + particle.acc.y) / 3
-				entity.acc.x = accX
-				entity.acc.y = accY
-				particle.acc.x = accX
-				particle.acc.y = accY
+				entity.vol.x *= -1
+				entity.vol.y *= -1
+				const volX = (entity.vol.x + particle.vol.x) / 2
+				const volY = (entity.vol.y + particle.vol.y) / 2
+				entity.vol.x = volX
+				entity.vol.y = volY
+				particle.vol.x = volX
+				particle.vol.y = volY
 			}
 		})
 	},
 	care: entity => {
 		particleArr.forEach(particle => {
-			if (particle !== entity)
+			if (particle != entity)
 			if (entity.coords.x < particle.coords.x + particle.mass)
 			if (entity.coords.x > particle.coords.x - entity.mass)
 			if (entity.coords.y < particle.coords.y + particle.mass)
 			if (entity.coords.y > particle.coords.y - entity.mass) {
 				// entity.coords.x *= -1
 				// entity.coords.y *= -1
-				const accX = (entity.acc.x + particle.acc.x) / 2
-				const accY = (entity.acc.y + particle.acc.y) / 2
-				entity.acc.x = accX
-				entity.acc.y = accY
-				particle.acc.x = accX
-				particle.acc.y = accY
+				const volX = (entity.vol.x + particle.vol.x) / 2
+				const volY = (entity.vol.y + particle.vol.y) / 2
+				entity.vol.x = volX
+				entity.vol.y = volY
+				particle.vol.x = volX
+				particle.vol.y = volY
 			}
 		})
 
@@ -385,12 +387,12 @@ function load() {
  **************************************/
 
 function start() {
-	let i = 20
+	let i = 50
 
 	particleArr = []
 
 	while (i--)
-		particleArr.push(new Particle())
+		particleArr.push(new Particle({type: config.type}))
 	// console.log(particleArr)
 }
 
