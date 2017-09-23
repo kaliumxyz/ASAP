@@ -254,9 +254,9 @@ const render = {
 		context.fillStyle = '#FFF'
 		context.fillRect(0, 0, canvas.width, canvas.height)
 		particleArr.forEach(particle => {
-			checkWithinBounds(particle)
 			collisions[config.collisions](particle)
 			gravity[config.gravity](particle)
+			checkWithinBounds(particle)
 			move(particle)
 			render[particle.type](particle)
 		})
@@ -318,14 +318,33 @@ function move(particle) {
  ***************************************/
 
 function checkWithinBounds(entity) {
-	if (entity.coords.x + entity.mass < 0)
-		entity.coords.x = canvas.width
-	if (entity.coords.x > canvas.width)
-		entity.coords.x = 0 - entity.mass
-	if (entity.coords.y + entity.mass < 0)
-		entity.coords.y = canvas.height
-	if (entity.coords.y > canvas.height)
-		entity.coords.y = 0 - entity.mass
+	if(config.bounds){
+		if (entity.coords.x < 0) {
+			entity.vol.x *= -1
+			entity.coords.x++
+		}
+		if (entity.coords.x + entity.mass > canvas.width) {
+			entity.vol.x *= -1
+			entity.coords.x--
+		}
+		if (entity.coords.y < 0) {
+			entity.vol.y *= -1
+			entity.coords.y++
+		}
+		if (entity.coords.y + entity.mass > canvas.height) {
+			entity.vol.y *= -1
+			entity.coords.y--
+		}
+	} else {
+		if (entity.coords.x + entity.mass < 0)
+			entity.coords.x = canvas.width
+		if (entity.coords.x > canvas.width)
+			entity.coords.x = 0 - entity.mass
+		if (entity.coords.y + entity.mass < 0)
+			entity.coords.y = canvas.height
+		if (entity.coords.y > canvas.height)
+			entity.coords.y = 0 - entity.mass
+	}
 }
 
 const collisions = {

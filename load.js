@@ -55,10 +55,9 @@ const term = {
 
 		},
 		enter: ev => {
-			if(9 < term.cursor.position && 14 > term.cursor.position) {
-				if(config.bounds)
+			if(8 < term.cursor.position && 14 > term.cursor.position) {
 				selectAll(".option-bounds").forEach(el => el.classList.toggle('active'))
-				config.bounds != config.bounds
+				config.bounds =! config.bounds
 			}
 			if(23 < term.cursor.position && 32 > term.cursor.position) {
 				config.gravity = "wiggly"
