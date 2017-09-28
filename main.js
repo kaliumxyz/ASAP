@@ -80,11 +80,16 @@ const mouse = {
 				particleArr.push(new Particle({x:mouse.clone.clientX, y:mouse.clone.clientY, type: config.type}))
 			}
 		},
-		bow: ev => {
-			return _ => {
-					//particleArr.push(particle(mouse.clone.clientX, mouse.clone.clientY))
-			}
-		},
+		// bow: ev => {
+		// 	return _ => {
+		// 			//particleArr.push(particle(mouse.clone.clientX, mouse.clone.clientY))
+		// 	}
+		// },
+		// create: ev => {
+		// 	return function () {
+		// 		particleArr.push(new Particle({x:mouse.clone.clientX, y:mouse.clone.clientY, type: config.type}))
+		// 	}
+		// },
 		// blackHole : ev => {
 		//     particleArr.push(particle(ev.clientX,ev.clientY,-100))
 		// }
@@ -161,7 +166,7 @@ window.ontouchstart = window.onmousedown
 
 window.ontouchend = window.onmouseup
 
-window.ontouchmove = window.onmousemove
+window.ontouchmove = ev => mouse.clone = ev
 
 // When does this even fire?
 window.ontouchcancel = window.ontouchend

@@ -1,11 +1,23 @@
 "use strict"
 
-function select(selector) {
-	return document.querySelector(selector)
+/**
+ * dotless querySelect method (context aware)
+ * @param {String} selector 
+ * @param {Node} parent 
+ */
+function select(selector, parent) {
+	return parent ?	parent.querySelector(selector) :
+			document.querySelector(selector)
 }
 
-function selectAll(selector) {
-	return document.querySelectorAll(selector)
+/**
+ * dotless querySelectAll method (context aware)
+ * @param {String} selector 
+ * @param {Node} parent 
+ */
+function selectAll(selector, parent) {
+	return parent ?	parent.querySelectorAll(selector) :
+			document.querySelectorAll(selector)
 }
 
 function replaceChar(string, substring, index) {
@@ -17,14 +29,13 @@ function loadScript() {
 	script.setAttribute("src", "main.js")
 	select("head").appendChild(script)
 	select('h1').innerText = "A Simple Aesthetic Particle engine"
-	select('.options').setAttribute('style', 'display:none;')
-	select('.terminal-ghost').setAttribute('style', 'display:none;')
+	select('.terminal').setAttribute('style', 'display:none;')
 }
 
 const canvas = select('canvas')
 
 const config = {
-	bounds: true,
+	bounds: false,
 	gravity: "wiggly",
 	collisions: "care",
 	type: "square",
@@ -39,12 +50,12 @@ const term = {
 	ghost: select('.terminal-ghost'),
 	cursor: {
 		left: ev => {
-			if(term.cursor.position < 2)
+			if(term.cursor.position < 1)
 			return
 			term.cursor.location(--term.cursor.position)
 		},
 		right: ev => {
-			if(term.cursor.position > term.terminal.innerText.length - 4)
+			if(term.cursor.position > term.terminal.innerText.length - 3)
 			return
 			term.cursor.location(++term.cursor.position)
 		},
@@ -96,15 +107,30 @@ const term = {
 				`<span class="cursor">${term.terminal.innerText[l++]}</span>`,
 				l
 				)
-			term.ghost.innerHTML = match
+			hyperHTML.hyper(term.ghost)`${
+				match.split('\n').map(
+					x => `<p class='line'>${x}</p>`
+				)
+			}`
+			// hyperHTML.hyper(term.ghost)`${
+			// 	term.lines.bool('a','b','c')
+			// }`
 		},
-		position: 1
+		loc: {x: 0, y: 0},
+		position: 0,
+		line: 0
 	},
-	types: {
-		bool: function (classname, value, item) {
+	lines: {
+		bool: function (name, a, b) {
+			return hyperHTML.wire()`<span class=${['line', name]}>${name}? <span class=${['option', a]} onclick=${function(){this.classList.toggle('active')}}>${a}</span>/<span class=${['option', b]}>${b}</span> </span>`
+		},
+		mutiple: function (name, ...options) {
 			if(item !== value)
 			selectAll(classname).forEach(el => el.classList.toggle('active'))
 			item = value
+		},
+		slider: function (name) {
+			return hyperHTML.wire(`<span class=${['line', name]}>${name} [<span>█████████████████████████████</span>] </span>`)
 		}
 	}
 }

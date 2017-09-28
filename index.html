@@ -4,6 +4,7 @@
     <title>ASAP</title>
     <link href='https://fonts.googleapis.com/css?family=Roboto+Mono' rel='stylesheet'>
     <link href='assets/css/style.css' rel='stylesheet'>
+    <script src="https://unpkg.com/hyperhtml@latest/min.js"></script>
     <meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=0'/>
 </head>
 <body>
@@ -14,17 +15,16 @@
     
 <div class='terminal'>
 <div class='terminal-ghost'></div>
-<div class='options terminal-main'>
-<p class='line'>bounds? <span class='option option-bounds active'>y</span>/<span class='option option-bounds'>n</span></p>
+<div class='terminal-main'>
+<p class='line'>bounds? <span class='option option-bounds'>y</span>/<span class='option option-bounds active'>n</span></p>
 <p class='line'>gravity? <span class='option active'>[wiggly]</span>/<span class='option'>[wigglyInverse]</span>/<span class='option'>[regular]</span></p>
 <p class='line'>collisions? <span class='option option-collisions'>[boring]</span>/<span class='option option-collisions active'>[care]</span></p>
 <p class='line'>type? <span class='option option-type'>[round]</span>/<span class='option active option-type'>[square]</span></p>
-
 </div>
 </div>
 </div>
 
-    <canvas width='1000' height='1000'>If you can read this, your browser does not support HTML5 canvas.</canvas>
+<canvas width='1000' height='1000'>If you can read this, your browser does not support HTML5 canvas.</canvas>
 </body>
 <script src='load.js'></script>
 </html>
