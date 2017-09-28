@@ -76,8 +76,8 @@ const mouse = {
 	},
 	modus: {
 		emit: ev => {
-			return _ => {
-					particleArr.push(new Particle({x:mouse.clone.clientX, y:mouse.clone.clientY, type: config.type}))
+			return function () {
+				particleArr.push(new Particle({x:mouse.clone.clientX, y:mouse.clone.clientY, type: config.type}))
 			}
 		},
 		bow: ev => {
@@ -94,12 +94,12 @@ const mouse = {
 		//         particleArr[i] = (particle(ev.clientX,ev.clientY))
 		//     }
 		// },
-		gravitate: ev => {
+		gravitate: function(ev) {
 			return _ => {
 				gravity.boring({
 					coords: {
-						x: ev.clientX,
-						y: ev.clientY,
+						x: mouse.clone.clientX,
+						y: mouse.clone.clientY,
 					},
 					mass: 100000,
 				})
@@ -157,7 +157,7 @@ window.onscroll = onScroll
 // Touchscreen handles very different from a mouse, make seperate actions!
 const touch = {}
 
-// window.ontouchstart = window.onmousedown
+window.ontouchstart = window.onmousedown
 
 window.ontouchend = window.onmouseup
 
@@ -252,6 +252,9 @@ const render = {
 		context.fillRect(particle.coords.x, particle.coords.y, particle.mass, particle.mass)
 		context.fill()
 	},
+	point: (coords = {x:50, y: 50}) => {
+		
+	},
 	game: _ => {
 		context.fillStyle = '#FFF'
 		context.fillRect(0, 0, canvas.width, canvas.height)
@@ -274,7 +277,7 @@ const render = {
 const gravity = {
 	boring: entity => {
 		particleArr.forEach(particle => {
-			if (particle != entity) {
+			if (particle !== entity) {
 				let x = particle.coords.x - entity.coords.x
 				let y = particle.coords.y - entity.coords.y
 				let r = x * x + y * y
@@ -288,7 +291,7 @@ const gravity = {
 	wigglyInverse: entity => {
 		let force = 1
 		particleArr.forEach(particle => {
-			if (particle != entity) {
+			if (particle !== entity) {
 				let xDistance = particle.coords.x - entity.coords.x
 				let yDistance = particle.coords.y - entity.coords.y
 			force *= entity.mass
@@ -300,7 +303,7 @@ const gravity = {
 	wiggly: entity => {
 		let force = 1
 		particleArr.forEach(particle => {
-			if (particle != entity) {
+			if (particle !== entity) {
 				let x = particle.coords.x - entity.coords.x
 				let y = particle.coords.y - entity.coords.y
 				// force *= entity.mass
@@ -352,7 +355,7 @@ function checkWithinBounds(entity) {
 const collisions = {
 	boring: entity => {
 		particleArr.forEach(particle => {
-			if (particle != entity)
+			if (particle !== entity)
 			if (entity.coords.x < particle.coords.x + particle.mass)
 			if (entity.coords.x > particle.coords.x - entity.mass)
 			if (entity.coords.y < particle.coords.y + particle.mass)
@@ -370,7 +373,7 @@ const collisions = {
 	},
 	care: entity => {
 		particleArr.forEach(particle => {
-			if (particle != entity)
+			if (particle !== entity)
 			if (entity.coords.x < particle.coords.x + particle.mass)
 			if (entity.coords.x > particle.coords.x - entity.mass)
 			if (entity.coords.y < particle.coords.y + particle.mass)
@@ -421,7 +424,9 @@ function main() {
 	// Rate at which it runs doesn't matter.
 	requestAnimationFrame(main)
 	// If we want something to be done every frame, add it here.
-	actions.forEach(action => action())
+	actions.forEach(action => {
+		action()
+	})
 	if (!paused)
 		render.game()
 }
