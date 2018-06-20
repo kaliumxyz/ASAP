@@ -5,13 +5,11 @@
   "main": "index.js",
   "author": "kalium",
   "license": "MIT",
-  "dependencies": {
-    "electron": "^1.6.6"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "ava": "^0.19.1",
-    "node-sass": "^4.5.2",
-    "nodemon": "^1.11.0"
+    "ava": "^0.25.0",
+    "node-sass": "^4.9.0",
+    "nodemon": "^1.17.5"
   },
   "scripts": {
     "watch-css": "node-sass -w -r ./assets/sass -o ./assets/css",

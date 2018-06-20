@@ -1,13 +1,13 @@
-'use strict'
+'use strict';
 
-const context = canvas.getContext('2d')
+const context = canvas.getContext('2d');
 
 // New keys, we assume the loader made the keys variable already, will need to chance once we split things.
-keys[32] = start
-keys[49] = save
-keys[50] = load
-keys[80] = pause
-keys[77] = mouseNext
+keys[32] = start;
+keys[49] = save;
+keys[50] = load;
+keys[80] = pause;
+keys[77] = mouseNext;
 
 /* TODO:
  * - unit testing.
@@ -46,11 +46,11 @@ keys[77] = mouseNext
 /* Global variables.
  ********************/
 
-const settings = {type: "square"}
+const settings = {type: 'square'};
 
-let actions = []
+let actions = [];
 
-let paused = false
+let paused = false;
 
 
 /* universal functions.
@@ -63,7 +63,7 @@ let paused = false
  */
 
 function rand(i = 1) {
-	return i * Math.random()
+	return i * Math.random();
 }
 
 /* Anything relating to the mouse events.
@@ -77,8 +77,8 @@ const mouse = {
 	modus: {
 		emit: ev => {
 			return function () {
-				particleArr.push(new Particle({x:mouse.clone.clientX, y:mouse.clone.clientY, type: config.type}))
-			}
+				particleArr.push(new Particle({x:mouse.clone.clientX, y:mouse.clone.clientY, type: config.type}));
+			};
 		},
 		// bow: ev => {
 		// 	return _ => {
@@ -107,8 +107,8 @@ const mouse = {
 						y: mouse.clone.clientY,
 					},
 					mass: 100000,
-				})
-			}
+				});
+			};
 		},
 		// edit : ev => {
 		//     pause() 
@@ -116,23 +116,23 @@ const mouse = {
 		// },
 	},
 	action: '',
-}
+};
 
 /**
  * Change the mousemode to the next in the list.
  */
 
 function mouseNext() {
-	let flag
-		for (let mode in mouse.modus) {
-			if (flag)
-				return mouse.action = mouse.modus[mode]
-			flag = mouse.modus[mode] === mouse.action
-		}
-	return mouse.action = mouse.modus.emit
+	let flag;
+	for (let mode in mouse.modus) {
+		if (flag)
+			return mouse.action = mouse.modus[mode];
+		flag = mouse.modus[mode] === mouse.action;
+	}
+	return mouse.action = mouse.modus.emit;
 }
 
-mouse.action = mouse.modus.gravitate
+mouse.action = mouse.modus.gravitate;
 
 /**
  * Scroll event handler.
@@ -140,64 +140,64 @@ mouse.action = mouse.modus.gravitate
  */
 
 function onScroll(ev) {
-	console.log(ev)
-	mouseNext()
+	console.log(ev);
+	mouseNext();
 	//scroller(ev.clientX,ev.clientY)
 }
 
 // This creates an... action emitter?
-window.onmousedown = ev => actions.push(mouse.action(ev))
+window.onmousedown = ev => actions.push(mouse.action(ev));
 
-window.onmouseup = ev => actions.pop()
+window.onmouseup = ev => actions.pop();
 
-window.onmousemove = ev => mouse.clone = ev
+window.onmousemove = ev => mouse.clone = ev;
 
-window.onclick = ev => mouse.clone = ev
+window.onclick = ev => mouse.clone = ev;
 
-window.onscroll = onScroll
+window.onscroll = onScroll;
 
 /* Anything related to touch events.
  ************************************/
 
 // Touchscreen handles very different from a mouse, make seperate actions!
-const touch = {}
+const touch = {};
 
-window.ontouchstart = window.onmousedown
+window.ontouchstart = window.onmousedown;
 
-window.ontouchend = window.onmouseup
+window.ontouchend = window.onmouseup;
 
-window.ontouchmove = ev => mouse.clone = ev
+//window.ontouchmove = ev => mouse.clone = ev;
 
 // When does this even fire?
-window.ontouchcancel = window.ontouchend
+window.ontouchcancel = window.ontouchend;
 
 
 
 // scroller window for picking mouse modes -fix this-
 function scroller(x, y) {
-	const picker = document.createElement("ul")
-	let mode
+	const picker = document.createElement('ul');
+	let mode;
 	for (mode in mouse.modus) {
-		let item = document.createElement("li")
-		item.innerText = mode
-		picker.appendChild(item)
+		let item = document.createElement('li');
+		item.innerText = mode;
+		picker.appendChild(item);
 	}
 
 
-	select('body').appendChild(picker)
-	pause()
+	select('body').appendChild(picker);
+	pause();
 }
 
 // Editor because we need to be able to edit particle properties ingame :p.
 function edit(x, y) {
-	const editor = document.createElement("code")
-	editor.setAttribute('class', 'json')
-	let particle = findParticle(x, y)
-	console.log(particle)
+	const editor = document.createElement('code');
+	editor.setAttribute('class', 'json');
+	let particle = findParticle(x, y);
+	console.log(particle);
 	if (!particle)
-		return
-	editor.innerText = JSON.stringify(particle)
-	select('body').appendChild(editor)
+		return;
+	editor.innerText = JSON.stringify(particle);
+	select('body').appendChild(editor);
 }
 
 /**
@@ -207,15 +207,15 @@ function edit(x, y) {
  * @param {Int} y 
  */
 function findParticle(x, y) {
-	let temp
+	let temp;
 	particleArr.forEach(particle => {
 		if (x < particle.coords.x + particle.mass)
-		if (x > particle.coords.x)
-		if (y < particle.coords.y + particle.mass)
-		if (y > particle.coords.y)
-		temp = particle
-	})
-	return temp || false
+			if (x > particle.coords.x)
+				if (y < particle.coords.y + particle.mass)
+					if (y > particle.coords.y)
+						temp = particle;
+	});
+	return temp || false;
 }
 
 /**
@@ -226,54 +226,54 @@ class Particle {
 		this.coords = {
 			x: props.x || rand(canvas.width),
 			y: props.y || rand(canvas.height)
-		}
+		};
 		this.vol = {
 			x: rand(2) - 1,
 			y: rand(2) - 1
-		}
-		this.color = props.color || `hsla(${rand(360)},100%,58%,1)`
-		this.mass = props.mass || 20 + rand(80)
-		this.type = props.type || 'particle'
-		this.shape = 'round'
+		};
+		this.color = props.color || `hsla(${rand(360)},100%,58%,1)`;
+		this.mass = props.mass || 20 + rand(80);
+		this.type = props.type || 'particle';
+		this.shape = 'round';
 	}
 }
 
 // location to store the refrences to the particles
-let particleArr = []
+let particleArr = [];
 
 // Overly big render object, might be smarter to do this as a function instead.
 const render = {
 	particle: (particle, fill) => {
-		context.fillStyle = particle.color
-		context.beginPath()
-		context.arc(particle.coords.x, particle.coords.y, particle.mass, 0, Math.PI * 2)
+		context.fillStyle = particle.color;
+		context.beginPath();
+		context.arc(particle.coords.x, particle.coords.y, particle.mass, 0, Math.PI * 2);
 
 		// Take a second look at below.
-		fill || context.fill()
-		context.closePath()
+		fill || context.fill();
+		context.closePath();
 	},
 	square: particle => {
-		context.fillStyle = particle.color
-		context.fillRect(particle.coords.x, particle.coords.y, particle.mass, particle.mass)
-		context.fill()
+		context.fillStyle = particle.color;
+		context.fillRect(particle.coords.x, particle.coords.y, particle.mass, particle.mass);
+		context.fill();
 	},
 	point: (coords = {x:50, y: 50}) => {
 		
 	},
 	game: _ => {
-		context.fillStyle = '#FFF'
-		context.fillRect(0, 0, canvas.width, canvas.height)
+		context.fillStyle = '#FFF';
+		context.fillRect(0, 0, canvas.width, canvas.height);
 		particleArr.forEach(particle => {
-			collisions[config.collisions](particle)
-			gravity[config.gravity](particle)
-			checkWithinBounds(particle)
-			move(particle)
-			render[particle.type](particle)
-		})
+			collisions[config.collisions](particle);
+			gravity[config.gravity](particle);
+			checkWithinBounds(particle);
+			move(particle);
+			render[particle.type](particle);
+		});
 
 	}
 
-}
+};
 
 /* Anything and everything related to moving stuff around.
  **********************************************************/
@@ -283,45 +283,45 @@ const gravity = {
 	boring: entity => {
 		particleArr.forEach(particle => {
 			if (particle !== entity) {
-				let x = particle.coords.x - entity.coords.x
-				let y = particle.coords.y - entity.coords.y
-				let r = x * x + y * y
-				let force = ((entity.mass + particle.mass) / r) * config.G
-				particle.vol.x -= force * x
-				particle.vol.y -= force * y
+				let x = particle.coords.x - entity.coords.x;
+				let y = particle.coords.y - entity.coords.y;
+				let r = x * x + y * y;
+				let force = ((entity.mass + particle.mass) / r) * config.G;
+				particle.vol.x -= force * x;
+				particle.vol.y -= force * y;
 			}
 
-		})
+		});
 	},
 	wigglyInverse: entity => {
-		let force = 1
+		let force = 1;
 		particleArr.forEach(particle => {
 			if (particle !== entity) {
-				let xDistance = particle.coords.x - entity.coords.x
-				let yDistance = particle.coords.y - entity.coords.y
-			force *= entity.mass
-				particle.vol.x += force / xDistance
-				particle.vol.y += force / yDistance
+				let xDistance = particle.coords.x - entity.coords.x;
+				let yDistance = particle.coords.y - entity.coords.y;
+				force *= entity.mass;
+				particle.vol.x += force / xDistance;
+				particle.vol.y += force / yDistance;
 			}
-		})
+		});
 	},
 	wiggly: entity => {
-		let force = 1
+		let force = 1;
 		particleArr.forEach(particle => {
 			if (particle !== entity) {
-				let x = particle.coords.x - entity.coords.x
-				let y = particle.coords.y - entity.coords.y
+				let x = particle.coords.x - entity.coords.x;
+				let y = particle.coords.y - entity.coords.y;
 				// force *= entity.mass
-				particle.vol.x -= force / x
-				particle.vol.y -= force / y
+				particle.vol.x -= force / x;
+				particle.vol.y -= force / y;
 			}
-		})
+		});
 	},
-}
+};
 
 function move(particle) {
-	particle.coords.x += particle.vol.x / particle.mass
-	particle.coords.y += particle.vol.y / particle.mass
+	particle.coords.x += particle.vol.x / particle.mass;
+	particle.coords.y += particle.vol.y / particle.mass;
 }
 
 /* code relating to collisions here :D. 
@@ -330,30 +330,30 @@ function move(particle) {
 function checkWithinBounds(entity) {
 	if(config.bounds){
 		if (entity.coords.x < 0) {
-			entity.vol.x *= -1
-			entity.coords.x++
+			entity.vol.x *= -1;
+			entity.coords.x++;
 		}
 		if (entity.coords.x + entity.mass > canvas.width) {
-			entity.vol.x *= -1
-			entity.coords.x--
+			entity.vol.x *= -1;
+			entity.coords.x--;
 		}
 		if (entity.coords.y < 0) {
-			entity.vol.y *= -1
-			entity.coords.y++
+			entity.vol.y *= -1;
+			entity.coords.y++;
 		}
 		if (entity.coords.y + entity.mass > canvas.height) {
-			entity.vol.y *= -1
-			entity.coords.y--
+			entity.vol.y *= -1;
+			entity.coords.y--;
 		}
 	} else {
 		if (entity.coords.x + entity.mass < 0)
-			entity.coords.x = canvas.width
+			entity.coords.x = canvas.width;
 		if (entity.coords.x > canvas.width)
-			entity.coords.x = 0 - entity.mass
+			entity.coords.x = 0 - entity.mass;
 		if (entity.coords.y + entity.mass < 0)
-			entity.coords.y = canvas.height
+			entity.coords.y = canvas.height;
 		if (entity.coords.y > canvas.height)
-			entity.coords.y = 0 - entity.mass
+			entity.coords.y = 0 - entity.mass;
 	}
 }
 
@@ -361,80 +361,80 @@ const collisions = {
 	boring: entity => {
 		particleArr.forEach(particle => {
 			if (particle !== entity)
-			if (entity.coords.x < particle.coords.x + particle.mass)
-			if (entity.coords.x > particle.coords.x - entity.mass)
-			if (entity.coords.y < particle.coords.y + particle.mass)
-			if (entity.coords.y > particle.coords.y - entity.mass) {
-				entity.vol.x *= -1
-				entity.vol.y *= -1
-				const volX = (entity.vol.x + particle.vol.x) / 2
-				const volY = (entity.vol.y + particle.vol.y) / 2
-				entity.vol.x = volX
-				entity.vol.y = volY
-				particle.vol.x = volX
-				particle.vol.y = volY
-			}
-		})
+				if (entity.coords.x < particle.coords.x + particle.mass)
+					if (entity.coords.x > particle.coords.x - entity.mass)
+						if (entity.coords.y < particle.coords.y + particle.mass)
+							if (entity.coords.y > particle.coords.y - entity.mass) {
+								entity.vol.x *= -1;
+								entity.vol.y *= -1;
+								const volX = (entity.vol.x + particle.vol.x) / 2;
+								const volY = (entity.vol.y + particle.vol.y) / 2;
+								entity.vol.x = volX;
+								entity.vol.y = volY;
+								particle.vol.x = volX;
+								particle.vol.y = volY;
+							}
+		});
 	},
 	care: entity => {
 		particleArr.forEach(particle => {
 			if (particle !== entity)
-			if (entity.coords.x < particle.coords.x + particle.mass)
-			if (entity.coords.x > particle.coords.x - entity.mass)
-			if (entity.coords.y < particle.coords.y + particle.mass)
-			if (entity.coords.y > particle.coords.y - entity.mass) {
-				// entity.coords.x *= -1
-				// entity.coords.y *= -1
-				const volX = (entity.vol.x + particle.vol.x) / 2
-				const volY = (entity.vol.y + particle.vol.y) / 2
-				entity.vol.x = volX
-				entity.vol.y = volY
-				particle.vol.x = volX
-				particle.vol.y = volY
-			}
-		})
+				if (entity.coords.x < particle.coords.x + particle.mass)
+					if (entity.coords.x > particle.coords.x - entity.mass)
+						if (entity.coords.y < particle.coords.y + particle.mass)
+							if (entity.coords.y > particle.coords.y - entity.mass) {
+								// entity.coords.x *= -1
+								// entity.coords.y *= -1
+								const volX = (entity.vol.x + particle.vol.x) / 2;
+								const volY = (entity.vol.y + particle.vol.y) / 2;
+								entity.vol.x = volX;
+								entity.vol.y = volY;
+								particle.vol.x = volX;
+								particle.vol.y = volY;
+							}
+		});
 
 	}
-}
+};
 
 function pause() {
-	paused = !paused
+	paused = !paused;
 }
 
 /* saving and loading to and from the local storage.
  ****************************************************/
 
 function save() {
-	localStorage.setItem('particles', JSON.stringify(particleArr))
+	localStorage.setItem('particles', JSON.stringify(particleArr));
 }
 
 function load() {
-	particleArr = JSON.parse(localStorage.getItem('particles'))
+	particleArr = JSON.parse(localStorage.getItem('particles'));
 }
 
 /* Essentials for running the program.
  **************************************/
 
 function start() {
-	let i = 50
+	let i = 50;
 
-	particleArr = []
+	particleArr = [];
 
 	while (i--)
-		particleArr.push(new Particle({type: config.type}))
+		particleArr.push(new Particle({type: config.type}));
 	// console.log(particleArr)
 }
 
 function main() {
 	// Rate at which it runs doesn't matter.
-	requestAnimationFrame(main)
+	requestAnimationFrame(main);
 	// If we want something to be done every frame, add it here.
 	actions.forEach(action => {
-		action()
-	})
+		action();
+	});
 	if (!paused)
-		render.game()
+		render.game();
 }
 
-start()
-main()
+start();
+main();
