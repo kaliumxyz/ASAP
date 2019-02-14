@@ -6,14 +6,8 @@
   "author": "kalium",
   "license": "MIT",
   "dependencies": {},
-  "devDependencies": {
-    "ava": "^0.25.0",
-    "node-sass": "^4.9.0",
-    "nodemon": "^1.17.5"
-  },
   "scripts": {
-    "watch-css": "node-sass -w -r ./assets/sass -o ./assets/css",
-    "test": "ava",
+    "test": "echo 0",
     "start": "electron ."
   }
 }
