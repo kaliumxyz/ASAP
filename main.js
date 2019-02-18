@@ -264,8 +264,9 @@ const render = {
 		context.fillStyle = '#FFF';
 		context.fillRect(0, 0, canvas.width, canvas.height);
 		particleArr.forEach(particle => {
-			collisions[config.collisions](particle);
+			// make this a function that the particle has or refrences which contains these functions to allow for costum behaviour
 			gravity[config.gravity](particle);
+			collisions[config.collisions](particle);
 			checkWithinBounds(particle);
 			move(particle);
 			render[particle.type](particle);
@@ -360,20 +361,26 @@ function checkWithinBounds(entity) {
 const collisions = {
 	boring: entity => {
 		particleArr.forEach(particle => {
-			if (particle !== entity)
-				if (entity.coords.x < particle.coords.x + particle.mass)
-					if (entity.coords.x > particle.coords.x - entity.mass)
-						if (entity.coords.y < particle.coords.y + particle.mass)
-							if (entity.coords.y > particle.coords.y - entity.mass) {
+			// don't allow particles to collide with themselves
+			if (particle !== entity) {
+				const x = entity.coords.x + entity.vol.x / entity.mass;
+				const y = entity.coords.y + entity.vol.y / entity.mass;
+				if (x < particle.coords.x + particle.mass)
+					if (x > particle.coords.x - entity.mass)
+						if (y < particle.coords.y + particle.mass)
+							if (y > particle.coords.y - entity.mass) {
 								entity.vol.x *= -1;
 								entity.vol.y *= -1;
 								const volX = (entity.vol.x + particle.vol.x) / 2;
 								const volY = (entity.vol.y + particle.vol.y) / 2;
 								entity.vol.x = volX;
 								entity.vol.y = volY;
-								particle.vol.x = volX;
-								particle.vol.y = volY;
+
+								// comment out the two lines below for a cool effect
+								// particle.vol.x = volX;
+								// particle.vol.y = volY;
 							}
+			}
 		});
 	},
 	care: entity => {
@@ -416,7 +423,7 @@ function load() {
  **************************************/
 
 function start() {
-	let i = 50;
+	let i = 20;
 
 	particleArr = [];
 

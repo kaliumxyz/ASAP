@@ -37,7 +37,7 @@ const canvas = select('canvas')
 const config = {
 	bounds: false,
 	gravity: "wiggly",
-	collisions: "care",
+	collisions: "boring",
 	type: "square",
 	G: 0.01
 }
@@ -141,7 +141,11 @@ window.onresize = _ => {
 	term.cursor.location()
 }
 
-window.onload = window.onresize
+window.onload = _ => {
+	window.onresize()
+	loadScript()
+
+}
 
 // the highest key number is 222, we need that many functions for our handler
 const keys = new Array(222)
