@@ -369,6 +369,10 @@ const collisions = {
 					if (x > particle.coords.x - entity.mass)
 						if (y < particle.coords.y + particle.mass)
 							if (y > particle.coords.y - entity.mass) {
+								/* breaks down when more than 2 particles are involved
+								 * scenario: particle A will hit B so it inverts its velocity.
+								 * if afterwards it will hit C it inverts again, this causes weird behavior like particles phasing into eachother.
+								 */
 								entity.vol.x *= -1;
 								entity.vol.y *= -1;
 								const volX = (entity.vol.x + particle.vol.x) / 2;
