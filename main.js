@@ -41,6 +41,9 @@ keys[77] = mouseNext;
  * - Add angles.
  * - Physics engine.
  *   - engine in webasm.
+ *   - calculate collicions based on a projected vector so particles cannot "teleport".
+ * - Rendering
+ *   - do not rerender everything every tic, instead render by blanking out prior location of particle and rendering new one.
  */
 
 /* Global variables.
