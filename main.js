@@ -44,6 +44,8 @@ keys[77] = mouseNext;
  *   - calculate collicions based on a projected vector so particles cannot "teleport".
  * - Rendering
  *   - do not rerender everything every tic, instead render by blanking out prior location of particle and rendering new one.
+ * - Faux-terminal / loader
+ *   - generate the terminal text from the options.
  */
 
 /* Global variables.
@@ -268,11 +270,11 @@ const render = {
 		context.fillRect(0, 0, canvas.width, canvas.height);
 		particleArr.forEach(particle => {
 			// make this a function that the particle has or refrences which contains these functions to allow for costum behaviour
+			render[particle.type](particle);
 			gravity[config.gravity](particle);
 			collisions[config.collisions](particle);
 			checkWithinBounds(particle);
 			move(particle);
-			render[particle.type](particle);
 		});
 
 	}
@@ -361,13 +363,35 @@ function checkWithinBounds(entity) {
 	}
 }
 
+const debug = {
+	render_path: (entity, x, y) => {
+		context.fillStyle = "#000";
+		context.lineWith = 1;
+		context.beginPath();
+		context.moveTo(entity.coords.x + entity.mass / 2, entity.coords.y + entity.mass / 2);
+		context.lineTo(entity.coords.x + entity.vol.x + entity.mass / 2, entity.coords.y + entity.vol.y + entity.mass / 2);
+		context.closePath();
+		context.stroke();
+	},
+	render_path: (entity, x, y) => {
+		context.fillStyle = "#000";
+		context.lineWith = 1;
+		context.beginPath();
+		context.moveTo(entity.coords.x + entity.mass / 2, entity.coords.y + entity.mass / 2);
+		context.lineTo(entity.coords.x + entity.vol.x + entity.mass / 2, entity.coords.y + entity.vol.y + entity.mass / 2);
+		context.closePath();
+		context.stroke();
+	}
+}
+
 const collisions = {
 	boring: entity => {
+		const x = entity.coords.x + entity.vol.x / entity.mass;
+		const y = entity.coords.y + entity.vol.y / entity.mass;
+		debug.render_path(entity, x, y);
 		particleArr.forEach(particle => {
 			// don't allow particles to collide with themselves
 			if (particle !== entity) {
-				const x = entity.coords.x + entity.vol.x / entity.mass;
-				const y = entity.coords.y + entity.vol.y / entity.mass;
 				if (x < particle.coords.x + particle.mass)
 					if (x > particle.coords.x - entity.mass)
 						if (y < particle.coords.y + particle.mass)
@@ -376,6 +400,7 @@ const collisions = {
 								 * scenario: particle A will hit B so it inverts its velocity.
 								 * if afterwards it will hit C it inverts again, this causes weird behavior like particles phasing into eachother.
 								 */
+								// actually calculate the new vector instead of being lazy and inverting
 								entity.vol.x *= -1;
 								entity.vol.y *= -1;
 								const volX = (entity.vol.x + particle.vol.x) / 2;
@@ -384,8 +409,8 @@ const collisions = {
 								entity.vol.y = volY;
 
 								// comment out the two lines below for a cool effect
-								// particle.vol.x = volX;
-								// particle.vol.y = volY;
+								particle.vol.x = volX;
+								particle.vol.y = volY;
 							}
 			}
 		});
