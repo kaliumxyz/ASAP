@@ -19,7 +19,9 @@ keys[77] = mouseNext;
  *   - walls, immutable, indistructable.
  * - more shiny good stuff.
  * - GUI
+ *   - visualize gravity
  * - actual particle behaviour:
+ *   - relativity
  *   - point gravity.
  *   - motion.
  *   - containment.
@@ -36,7 +38,7 @@ keys[77] = mouseNext;
  *   - editor.
  *     - json.
  *     - aspects? some drag and pull system, freeze, selecting, etc.
- *   - create gravity well. 
+ *   - create gravity well.
  * - Adding title randomizer.
  * - Add angles.
  * - Physics engine.
@@ -63,7 +65,7 @@ let paused = false;
 
 /**
  * returns a random number
- * @param {Int} i 
+ * @param {Int} i
  * @return {Int}
  */
 
@@ -106,7 +108,7 @@ const mouse = {
 		// },
 		gravitate: function(ev) {
 			return _ => {
-				gravity.boring({
+				gravity.newton({
 					coords: {
 						x: mouse.clone.clientX,
 						y: mouse.clone.clientY,
@@ -116,7 +118,7 @@ const mouse = {
 			};
 		},
 		// edit : ev => {
-		//     pause() 
+		//     pause()
 		//     edit(ev.clientX,ev.clientY)
 		// },
 	},
@@ -141,7 +143,7 @@ mouse.action = mouse.modus.gravitate;
 
 /**
  * Scroll event handler.
- * @param {scrollEvent} ev 
+ * @param {scrollEvent} ev
  */
 
 function onScroll(ev) {
@@ -208,8 +210,8 @@ function edit(x, y) {
 /**
  * Finds any particle at the X and Y coords given, returns the last particle found.
  * If no particles are found, returns false.
- * @param {Int} x 
- * @param {Int} y 
+ * @param {Int} x
+ * @param {Int} y
  */
 function findParticle(x, y) {
 	let temp;
@@ -248,34 +250,51 @@ let particleArr = [];
 
 // Overly big render object, might be smarter to do this as a function instead.
 const render = {
-	particle: (particle, fill) => {
-		context.fillStyle = particle.color;
-		context.beginPath();
-		context.arc(particle.coords.x, particle.coords.y, particle.mass, 0, Math.PI * 2);
+    particle: (particle, fill) => {
+        context.fillStyle = particle.color;
+        context.beginPath();
+        context.arc(particle.coords.x, particle.coords.y, particle.mass, 0, Math.PI * 2);
 
-		// Take a second look at below.
-		fill || context.fill();
-		context.closePath();
-	},
-	square: particle => {
-		context.fillStyle = particle.color;
-		context.fillRect(particle.coords.x, particle.coords.y, particle.mass, particle.mass);
-		context.fill();
-	},
-	point: (coords = {x:50, y: 50}) => {
-		
-	},
-	game: _ => {
-		context.fillStyle = '#FFF';
-		context.fillRect(0, 0, canvas.width, canvas.height);
-		particleArr.forEach(particle => {
-			// make this a function that the particle has or refrences which contains these functions to allow for costum behaviour
-			render[particle.type](particle);
-			gravity[config.gravity](particle);
-			collisions[config.collisions](particle);
-			checkWithinBounds(particle);
-			move(particle);
-		});
+        if (!fill) {
+            context.fill();
+        }
+        context.closePath();
+    },
+    square: particle => {
+        context.fillStyle = particle.color;
+        context.fillRect(particle.coords.x, particle.coords.y, particle.mass, particle.mass);
+        context.fill();
+    },
+	  point: (coords = {x:50, y: 50}) => {
+
+	  },
+    game: _ => {
+        context.fillStyle = '#FFF';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        const set = particleArr.slice();
+        particleArr.forEach(particle => {
+            let {x, y} = particle;
+            // make this a function that the particle has or refrences which contains these functions to allow for costum behaviour
+            render[particle.type](particle);
+            if (true) {
+                const entity = set.shift();
+                set.forEach(particle => {
+                    let {x, y} = calculate_relative_coords(particle.coords, entity.coords);
+                    let r = (x + y) ** 2;
+                    let force = ((entity.mass * particle.mass) / r) * config.G;
+                    particle.vol.x -= force * x;
+                    particle.vol.y -= force * y;
+                    entity.vol.x += force * x;
+                    entity.vol.y += force * y;
+                });
+            } else {
+                gravity[config.gravity](particle);
+            }
+            collisions[config.collisions](particle);
+            checkWithinBounds(particle);
+			      move(particle);
+            debug.render_vector(particle, x, y, "#F00", 3);
+		    });
 
 	}
 
@@ -284,156 +303,214 @@ const render = {
 /* Anything and everything related to moving stuff around.
  **********************************************************/
 
+/**
+ * calculate relative coords between two pairs
+ * @param {Coords} self
+ * @param {Coords} target
+ * @return {Coords}
+ */
 
-const gravity = {
-	boring: entity => {
-		particleArr.forEach(particle => {
-			if (particle !== entity) {
-				let x = particle.coords.x - entity.coords.x;
-				let y = particle.coords.y - entity.coords.y;
-				let r = x * x + y * y;
-				let force = ((entity.mass + particle.mass) / r) * config.G;
-				particle.vol.x -= force * x;
-				particle.vol.y -= force * y;
-			}
-
-		});
-	},
-	wigglyInverse: entity => {
-		let force = 1;
-		particleArr.forEach(particle => {
-			if (particle !== entity) {
-				let xDistance = particle.coords.x - entity.coords.x;
-				let yDistance = particle.coords.y - entity.coords.y;
-				force *= entity.mass;
-				particle.vol.x += force / xDistance;
-				particle.vol.y += force / yDistance;
-			}
-		});
-	},
-	wiggly: entity => {
-		let force = 1;
-		particleArr.forEach(particle => {
-			if (particle !== entity) {
-				let x = particle.coords.x - entity.coords.x;
-				let y = particle.coords.y - entity.coords.y;
-				// force *= entity.mass
-				particle.vol.x -= force / x;
-				particle.vol.y -= force / y;
-			}
-		});
-	},
-};
-
-function move(particle) {
-	particle.coords.x += particle.vol.x / particle.mass;
-	particle.coords.y += particle.vol.y / particle.mass;
+function calculate_relative_coords(self = {x:0, y:0}, target = {x:0, y:0}) {
+		let x = self.x - target.x;
+		let y = self.y - target.y;
+    return {x, y};
 }
 
-/* code relating to collisions here :D. 
+
+/**
+ * calculate new velocity of particle
+ * @param {Particle} particle
+ * @return {Particle}
+ */
+
+const gravity = {
+    newton: entity => {
+        particleArr.forEach(particle => {
+            if (particle !== entity) {
+                let {x, y} = calculate_relative_coords(particle.coords, entity.coords);
+                let r = (x + y) ** 2;
+                let force = ((entity.mass * particle.mass) / r) * config.G;
+                particle.vol.x -= force * x;
+                particle.vol.y -= force * y;
+            }
+        });
+    },
+    wigglyInverse: entity => {
+        let force = 1;
+        particleArr.forEach(particle => {
+            if (particle !== entity) {
+                let xDistance = particle.coords.x - entity.coords.x;
+                let yDistance = particle.coords.y - entity.coords.y;
+                force *= entity.mass;
+                particle.vol.x += force / xDistance;
+                particle.vol.y += force / yDistance;
+            }
+        });
+    },
+    wiggly: entity => {
+        let force = 1;
+        particleArr.forEach(particle => {
+            if (particle !== entity) {
+                let x = particle.coords.x - entity.coords.x;
+                let y = particle.coords.y - entity.coords.y;
+				        // force *= entity.mass
+				        particle.vol.x -= force / x;
+				        particle.vol.y -= force / y;
+			      }
+		    });
+	  },
+};
+
+/**
+ * apply particles velocity devided by particlem ass to particles coordinates
+ * @param {Particle} particle
+ * @return {Particle}
+ */
+
+function move(particle) {
+    particle.coords.x += particle.vol.x / particle.mass;
+    particle.coords.y += particle.vol.y / particle.mass;
+    return particle;
+}
+
+/* code relating to collisions here :D.
  ***************************************/
 
 function checkWithinBounds(entity) {
-	if(config.bounds){
-		if (entity.coords.x < 0) {
-			entity.vol.x *= -1;
-			entity.coords.x++;
-		}
-		if (entity.coords.x + entity.mass > canvas.width) {
-			entity.vol.x *= -1;
-			entity.coords.x--;
-		}
-		if (entity.coords.y < 0) {
-			entity.vol.y *= -1;
-			entity.coords.y++;
-		}
-		if (entity.coords.y + entity.mass > canvas.height) {
-			entity.vol.y *= -1;
-			entity.coords.y--;
-		}
-	} else {
-		if (entity.coords.x + entity.mass < 0)
-			entity.coords.x = canvas.width;
-		if (entity.coords.x > canvas.width)
-			entity.coords.x = 0 - entity.mass;
-		if (entity.coords.y + entity.mass < 0)
-			entity.coords.y = canvas.height;
-		if (entity.coords.y > canvas.height)
-			entity.coords.y = 0 - entity.mass;
-	}
+    if (entity.vol.y > canvas.height - 10) {
+        entity.vol.y = 0;
+    }
+    if (entity.vol.x > canvas.width - 10) {
+        entity.vol.x = 0;
+    }
+    if(config.bounds){
+        if (entity.coords.x < 0) {
+            entity.vol.x *= -1;
+            entity.coords.x++;
+        }
+        if (entity.coords.x + entity.mass > canvas.width) {
+            entity.vol.x *= -1;
+            entity.coords.x--;
+        }
+        if (entity.coords.y < 0) {
+            entity.vol.y *= -1;
+            entity.coords.y++;
+        }
+        if (entity.coords.y + entity.mass > canvas.height) {
+            entity.vol.y *= -1;
+            entity.coords.y--;
+        }
+    } else {
+        if (entity.coords.x + entity.mass < 0)
+            entity.coords.x = canvas.width;
+        if (entity.coords.x > canvas.width)
+            entity.coords.x = 0 - entity.mass;
+        if (entity.coords.y + entity.mass < 0)
+			      entity.coords.y = canvas.height;
+		    if (entity.coords.y > canvas.height)
+			      entity.coords.y = 0 - entity.mass;
+	  }
 }
 
 const debug = {
-	render_path: (entity, x, y) => {
-		context.fillStyle = "#000";
-		context.lineWith = 1;
-		context.beginPath();
-		context.moveTo(entity.coords.x + entity.mass / 2, entity.coords.y + entity.mass / 2);
-		context.lineTo(entity.coords.x + entity.vol.x + entity.mass / 2, entity.coords.y + entity.vol.y + entity.mass / 2);
-		context.closePath();
-		context.stroke();
-	},
-	render_path: (entity, x, y) => {
-		context.fillStyle = "#000";
-		context.lineWith = 1;
-		context.beginPath();
-		context.moveTo(entity.coords.x + entity.mass / 2, entity.coords.y + entity.mass / 2);
-		context.lineTo(entity.coords.x + entity.vol.x + entity.mass / 2, entity.coords.y + entity.vol.y + entity.mass / 2);
-		context.closePath();
-		context.stroke();
-	}
-}
+    render_path: (entity, x, y, color = "#000", n = 1) => {
+        context.strokeStyle = color;
+        context.lineWidth = n;
+        context.beginPath();
+        context.moveTo(entity.coords.x + entity.mass / 2, entity.coords.y + entity.mass / 2);
+        context.lineTo(entity.coords.x + entity.vol.x + entity.mass / 2, entity.coords.y + entity.vol.y + entity.mass / 2);
+        context.closePath();
+		    context.stroke();
+	  },
+    render_vector: (entity, x, y, color = "#000", n = 1) => {
+        context.strokeStyle = color;
+        context.lineWidth = n;
+        context.beginPath();
+        context.moveTo(entity.coords.x + entity.mass / 2, entity.coords.y + entity.mass / 2);
+        context.lineTo(entity.coords.x + entity.vol.x + entity.mass / 2, entity.coords.y + entity.vol.y + entity.mass / 2);
+        context.closePath();
+		    context.stroke();
+	  },
+};
 
 const collisions = {
-	boring: entity => {
-		const x = entity.coords.x + entity.vol.x / entity.mass;
-		const y = entity.coords.y + entity.vol.y / entity.mass;
-		debug.render_path(entity, x, y);
-		particleArr.forEach(particle => {
-			// don't allow particles to collide with themselves
-			if (particle !== entity) {
-				if (x < particle.coords.x + particle.mass)
-					if (x > particle.coords.x - entity.mass)
-						if (y < particle.coords.y + particle.mass)
-							if (y > particle.coords.y - entity.mass) {
-								/* breaks down when more than 2 particles are involved
-								 * scenario: particle A will hit B so it inverts its velocity.
-								 * if afterwards it will hit C it inverts again, this causes weird behavior like particles phasing into eachother.
-								 */
-								// actually calculate the new vector instead of being lazy and inverting
-								entity.vol.x *= -1;
-								entity.vol.y *= -1;
-								const volX = (entity.vol.x + particle.vol.x) / 2;
-								const volY = (entity.vol.y + particle.vol.y) / 2;
-								entity.vol.x = volX;
-								entity.vol.y = volY;
+    boring: entity => {
+        const x = entity.coords.x + entity.vol.x / entity.mass;
+        const y = entity.coords.y + entity.vol.y / entity.mass;
+        particleArr.forEach(particle => {
+            // don't allow particles to collide with themselves
+            if (particle !== entity) {
+                if (x < particle.coords.x + particle.mass)
+                    if (x > particle.coords.x - entity.mass)
+                        if (y < particle.coords.y + particle.mass)
+                            if (y > particle.coords.y - entity.mass) {
+                                /* breaks down when more than 2 particles are involved
+                                 * scenario: particle A will hit B so it inverts its velocity.
+                                 * if afterwards it will hit C it inverts again, this causes weird behavior like particles phasing into eachother.
+                                 */
+                                // actually calculate the new vector instead of being lazy and inverting
+                                entity.vol.x *= -1;
+                                entity.vol.y *= -1;
+                                const volX = (entity.vol.x + particle.vol.x) / 2;
+                                const volY = (entity.vol.y + particle.vol.y) / 2;
+                                entity.vol.x = volX;
+                                entity.vol.y = volY;
 
-								// comment out the two lines below for a cool effect
-								particle.vol.x = volX;
-								particle.vol.y = volY;
-							}
-			}
-		});
-	},
-	care: entity => {
-		particleArr.forEach(particle => {
-			if (particle !== entity)
-				if (entity.coords.x < particle.coords.x + particle.mass)
-					if (entity.coords.x > particle.coords.x - entity.mass)
-						if (entity.coords.y < particle.coords.y + particle.mass)
-							if (entity.coords.y > particle.coords.y - entity.mass) {
-								// entity.coords.x *= -1
-								// entity.coords.y *= -1
-								const volX = (entity.vol.x + particle.vol.x) / 2;
-								const volY = (entity.vol.y + particle.vol.y) / 2;
-								entity.vol.x = volX;
-								entity.vol.y = volY;
-								particle.vol.x = volX;
-								particle.vol.y = volY;
-							}
-		});
+                                // comment out the two lines below for a cool effect
+                                particle.vol.x = volX;
+                                particle.vol.y = volY;
+                            }
+            }
+        });
+    },
+    newton: entity => {
+        const x = entity.coords.x + entity.vol.x / entity.mass;
+        const y = entity.coords.y + entity.vol.y / entity.mass;
+        particleArr.forEach(particle => {
+            // don't allow particles to collide with themselves
+            if (particle !== entity) {
+                if (x < particle.coords.x + particle.mass)
+                    if (x > particle.coords.x - entity.mass)
+                        if (y < particle.coords.y + particle.mass)
+                            if (y > particle.coords.y - entity.mass) {
+                                /* breaks down when more than 2 particles are involved
+                                 * scenario: particle A will hit B so it inverts its velocity.
+                                 * if afterwards it will hit C it inverts again, this causes weird behavior like particles phasing into eachother.
+                                 */
+                                // actually calculate the new vector instead of being lazy and inverting
+                                entity.vol.x *= -1;
+                                entity.vol.y *= -1;
+                                const volX = (entity.vol.x + particle.vol.x) / 2;
+                                const volY = (entity.vol.y + particle.vol.y) / 2;
+                                entity.vol.x = volX;
+                                entity.vol.y = volY;
 
-	}
+                                // comment out the two lines below for a cool effect
+                                particle.vol.x = volX;
+                                particle.vol.y = volY;
+                            }
+            }
+        });
+    },
+    care: entity => {
+        particleArr.forEach(particle => {
+            if (particle !== entity)
+                if (entity.coords.x < particle.coords.x + particle.mass)
+                    if (entity.coords.x > particle.coords.x - entity.mass)
+                        if (entity.coords.y < particle.coords.y + particle.mass)
+                            if (entity.coords.y > particle.coords.y - entity.mass) {
+								                // entity.coords.x *= -1
+								                // entity.coords.y *= -1
+								                const volX = (entity.vol.x + particle.vol.x) / 2;
+								                const volY = (entity.vol.y + particle.vol.y) / 2;
+								                entity.vol.x = volX;
+								                entity.vol.y = volY;
+								                particle.vol.x = volX;
+								                particle.vol.y = volY;
+							              }
+		    });
+
+	  }
 };
 
 function pause() {
@@ -455,7 +532,7 @@ function load() {
  **************************************/
 
 function start() {
-	let i = 20;
+	let i = 3;
 
 	particleArr = [];
 
